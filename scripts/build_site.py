@@ -19,6 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / 'scripts'))
 from etf_chart import render_chart  # noqa: E402
+from stock_chart import render_stock_chart  # noqa: E402
 
 DB = ROOT / 'data' / 'holdings.db'
 OUT = ROOT / 'docs'
@@ -500,8 +501,11 @@ def page_stock(con, sid, latest_date, base='../'):
     ).fetchone()
     sname = (name_row[0] if name_row else '') or sid
 
-    html = [head(f'{sid} {sname} — ETF 持有狀況', '', base)]
-    html.append(f'<div class="banner">追蹤所有主動式 ETF 對 {sid} 的持有時序</div>')
+    html = [head(f'{sid} {sname} — 技術分析 + ETF 持有狀況', '', base)]
+
+    # 技術分析（candlestick + MA + KD + MACD）
+    html.append('<h2>📈 技術分析（最近 2 年日線）</h2>')
+    html.append(render_stock_chart(sid))
 
     rows = con.execute('''
         SELECT h.etf_id, m.etf_name, h.shares, h.weight
@@ -620,8 +624,27 @@ def main():
         (OUT / 'etfs' / f'{etf_id}.html').write_text(page_etf(con, etf_id, latest), encoding='utf-8')
 
     stocks = [r[0] for r in con.execute('SELECT DISTINCT stock_id FROM holdings WHERE date=?', (latest,))]
-    for sid in stocks:
-        (OUT / 'stocks' / f'{sid}.html').write_text(page_stock(con, sid, latest), encoding='utf-8')
+    # 個股頁含 yfinance fetch (chart) → 並行加速。每 worker 開獨立 sqlite 連線。
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    import time as _t
+
+    def _render(sid):
+        c = sqlite3.connect(DB)
+        try:
+            return sid, page_stock(c, sid, latest)
+        finally:
+            c.close()
+
+    t0 = _t.time()
+    n_done = 0
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        for fut in as_completed([ex.submit(_render, s) for s in stocks]):
+            sid, html = fut.result()
+            (OUT / 'stocks' / f'{sid}.html').write_text(html, encoding='utf-8')
+            n_done += 1
+            if n_done % 50 == 0:
+                print(f'  個股頁 {n_done}/{len(stocks)} ({_t.time()-t0:.1f}s)', flush=True)
+    print(f'  個股頁完成 {n_done}/{len(stocks)} 總耗時 {_t.time()-t0:.1f}s')
 
     print('━━━ 完成 ━━━')
     print(f'  6 主頁 + {len(etfs)} ETF 頁 + {len(stocks)} 個股頁')

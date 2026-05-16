@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 .DS_Store
 *.swp
+
+# yfinance parquet cache — 每次 build 重生即可，不入版控
+data/prices/
