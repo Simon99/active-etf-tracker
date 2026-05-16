@@ -4,8 +4,8 @@
 `X-XSRF-TOKEN` 同時放回 X-XSRF-TOKEN header（雙重提交防 CSRF）。
 
 ETF 對照（FundID 是內部代號 E0001 / E0002 …，不等於上市代號）：
-  00984A 安聯台灣高息成長 → FundID E0001  (已確認)
-  00993A 主動安聯台灣      → FundID 未確認
+  00984A 安聯台灣高息成長 → FundID E0001
+  00993A 主動安聯台灣      → FundID E0002
 
 API:
   GET  /webapi/api/AntiForgery/GetAntiForgeryToken    (拿 XSRF cookie)
@@ -29,7 +29,7 @@ ASSETS_URL = f'{BASE}/webapi/api/Fund/GetFundAssets'
 
 REGISTRY = {
     '00984A': (None, 'E0001'),
-    # '00993A': (None, 'E????'),  # 等確認後加入
+    '00993A': (None, 'E0002'),
 }
 
 
