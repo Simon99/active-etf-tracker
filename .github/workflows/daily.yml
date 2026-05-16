@@ -2,10 +2,12 @@ name: Daily ETF refresh
 
 on:
   schedule:
-    # 09:30 UTC = 17:30 台灣時間（盤後 + 多數投信 PCF 已揭露）
-    # 週末也跑：issuer 不發新 PCF 也沒關係，build_site.py 永遠生成新時間戳，
-    # commit 仍會發生 → 「上次自動更新」chip 每天都會綠
-    - cron: '30 9 * * *'
+    # 一天觸發 3 次防呆。任一次成功就有當天時間戳更新。
+    # build_site.py 每次注入新 BUILD_UTC → HTML 一定有 diff → commit 必發生。
+    # cron 用 UTC，TW = UTC + 8
+    - cron: '30 9 * * *'    # TW 17:30 (主場) — issuer PCF 揭露完成後
+    - cron: '0 12 * * *'    # TW 20:00 (傍晚補) — 漏抓重試
+    - cron: '0 21 * * *'    # TW 05:00 隔天 (清晨保險) — 過夜重試
   workflow_dispatch:        # 允許手動觸發
 
 permissions:
