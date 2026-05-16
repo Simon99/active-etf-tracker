@@ -343,34 +343,126 @@ def page_index(con, latest_date, base=''):
 
 
 def page_daily(con, latest_date, base=''):
-    rows = con.execute('''
-        SELECT h.etf_id, m.etf_name, h.stock_id, h.stock_name, h.shares, h.weight
-        FROM holdings h LEFT JOIN etf_meta m USING(etf_id)
-        WHERE h.date = ?
-        ORDER BY h.etf_id, h.weight DESC
-    ''', (latest_date,)).fetchall() if latest_date else []
-
-    html = [head(f'每日快照 — {latest_date or "&lt;NA&gt;"}', 'daily.html', base)]
-    if not rows:
+    html = [head('每日成分股快照', 'daily.html', base)]
+    if not latest_date:
         html.append('<div class="banner">尚無資料。</div>')
         html.append(foot(latest_date))
         return '\n'.join(html)
 
-    html.append(f'<div class="banner">共 {len(set(r[0] for r in rows))} 檔 ETF / '
-                f'{len(rows)} 持股 row。點 ETF 代碼看技術圖；點個股看反向追蹤。</div>')
-    html.append('<table class="sortable"><thead><tr>'
-                '<th>ETF</th><th>名稱</th><th>個股</th><th>個股名</th>'
-                '<th>股數</th><th>權重 %</th></tr></thead><tbody>')
-    for etf_id, etf_name, sid, sname, shares, w in rows:
-        html.append(f'<tr>'
-                    f'<td><a href="{base}etfs/{etf_id}.html">{etf_id}</a></td>'
-                    f'<td>{etf_name or NA}</td>'
-                    f'<td><a href="{base}stocks/{sid}.html">{sid}</a></td>'
-                    f'<td>{sname or NA}</td>'
-                    f'<td data-sort="{shares or 0}">{fmt_num(shares)}</td>'
-                    f'<td data-sort="{w or 0}">{fmt_pct(w)}</td>'
-                    f'</tr>')
-    html.append('</tbody></table>')
+    html.append('<p class="mute" style="margin:-8px 0 16px">查看特定日期的完整持股清單（切換 ETF 看不同基金）</p>')
+
+    # 取所有有資料的日期 + ETF
+    dates = [r[0] for r in con.execute('SELECT DISTINCT date FROM holdings ORDER BY date DESC LIMIT 30')]
+    etf_rows = con.execute('''
+        SELECT DISTINCT h.etf_id, m.etf_name FROM holdings h
+        LEFT JOIN etf_meta m USING(etf_id)
+        WHERE h.date=?
+        ORDER BY h.etf_id
+    ''', (latest_date,)).fetchall()
+    etfs = [(e, n or e) for e, n in etf_rows]
+
+    # 預設選最大 AUM 的 ETF（若無 snapshot 就用第一個）
+    default_etf = None
+    if etfs:
+        biggest = con.execute('''
+            SELECT etf_id FROM fund_snapshot
+            WHERE date=(SELECT MAX(date) FROM fund_snapshot)
+            ORDER BY total_assets DESC NULLS LAST LIMIT 1
+        ''').fetchone()
+        default_etf = (biggest[0] if biggest else etfs[0][0])
+
+    # 控制列：日期 + ETF 兩個 dropdown
+    html.append('<div style="display:flex;gap:12px;align-items:center;margin:12px 0 16px;flex-wrap:wrap">')
+    html.append('<label style="color:#8b949e;font-size:13px">日期：'
+                '<select id="dateSel" style="background:#161b22;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;padding:5px 10px;font-size:13px">')
+    for d in dates:
+        sel = ' selected' if d == latest_date else ''
+        html.append(f'<option value="{d}"{sel}>{d}</option>')
+    html.append('</select></label>')
+    html.append('<label style="color:#8b949e;font-size:13px">ETF：'
+                '<select id="etfSel" style="background:#161b22;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;padding:5px 10px;font-size:13px;min-width:240px">')
+    for e, n in etfs:
+        sel = ' selected' if e == default_etf else ''
+        html.append(f'<option value="{e}"{sel}>{e}　{n}</option>')
+    html.append('</select></label>')
+    html.append('<span class="mute" style="font-size:11px">日期切換需要該日 ETF 有資料；空 banner 即代表該日未抓到</span>')
+    html.append('</div>')
+
+    # 為每個 (date, etf) 組合預先 render 一個 section（display:none 切換）
+    # 但這會爆量 — 限定 default_etf × 所有 dates + latest_date × 所有 ETFs，
+    # 點到沒 pre-render 的組合時 JS 顯示 placeholder
+    html.append('<div id="snapshots">')
+
+    rendered_combos = set()
+
+    def _render_snapshot(date, etf_id, etf_name, hide=True):
+        rows = con.execute('''
+            SELECT stock_id, stock_name, shares, weight
+            FROM holdings WHERE date=? AND etf_id=?
+            ORDER BY weight DESC
+        ''', (date, etf_id)).fetchall()
+        if not rows:
+            return f'<div class="snapshot" data-date="{date}" data-etf="{etf_id}" style="display:{"none" if hide else "block"}"><div class="banner">{date} / {etf_id} 無資料。</div></div>'
+
+        weights = [r[3] or 0 for r in rows]
+        total_w = sum(weights)
+        top5 = sum(sorted(weights, reverse=True)[:5])
+        max_w = max(weights)
+        max_pct_for_bar = max_w  # 把最大持股映射成滿格
+
+        out = [f'<div class="snapshot" data-date="{date}" data-etf="{etf_id}" style="display:{"none" if hide else "block"}">']
+        out.append('<div class="metric-grid">')
+        out.append(metric_card('權重加總', f'{total_w:.2f}%',
+                               'pos' if total_w > 90 else 'warn' if total_w > 70 else 'neg',
+                               sub=f'剩 {100-total_w:.2f}% 為現金/期貨'))
+        out.append(metric_card('前 5 大佔比', f'{top5:.2f}%', 'info',
+                               sub=f'共 {len(rows)} 檔持股'))
+        out.append(metric_card('最大持股', f'{max_w:.2f}%', 'warn' if max_w > 15 else '',
+                               sub=rows[0][1] or rows[0][0]))
+        out.append('</div>')
+
+        out.append(f'<h3 style="margin-top:18px">{etf_id}　{etf_name}　<span class="mute" style="font-size:12px;font-weight:400">{date}</span></h3>')
+        out.append('<table class="sortable"><thead><tr>'
+                   '<th>代號</th><th>名稱</th><th>股數</th>'
+                   '<th>權重 %</th><th>權重比視覺</th></tr></thead><tbody>')
+        for sid, sname, sh, w in rows:
+            out.append(f'<tr>'
+                       f'<td><a href="{base}stocks/{sid}.html">{sid}</a></td>'
+                       f'<td>{sname or NA}</td>'
+                       f'<td data-sort="{sh or 0}">{fmt_num(sh)}</td>'
+                       f'<td data-sort="{w or 0}">{fmt_pct(w)}</td>'
+                       f'<td>{bar_cell(w or 0, max_pct=max_pct_for_bar, txt="")}</td>'
+                       f'</tr>')
+        out.append('</tbody></table>')
+        out.append('</div>')
+        return '\n'.join(out)
+
+    # 對所有可用 (date, etf) 組合都 pre-render；資料量不大（22 ETF × 2 日 ≈ 44 sections）
+    for d in dates:
+        for e, n in etfs:
+            if (d, e) in rendered_combos:
+                continue
+            rendered_combos.add((d, e))
+            is_default = (d == latest_date and e == default_etf)
+            html.append(_render_snapshot(d, e, n, hide=not is_default))
+    html.append('</div>')
+
+    # JS 切換 snapshot
+    html.append('''<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var d = document.getElementById('dateSel');
+  var e = document.getElementById('etfSel');
+  function show(){
+    var dv = d.value, ev = e.value;
+    document.querySelectorAll('.snapshot').forEach(function(s){
+      s.style.display = (s.dataset.date===dv && s.dataset.etf===ev) ? 'block' : 'none';
+    });
+  }
+  d.addEventListener('change', show);
+  e.addEventListener('change', show);
+});
+</script>''')
+
     html.append(foot(latest_date))
     return '\n'.join(html)
 
@@ -594,11 +686,18 @@ def page_overlap(con, latest_date, base=''):
 
 
 def page_momentum(con, latest_date, base=''):
-    html = [head('同步加碼', 'momentum.html', base)]
+    html = [head('多家投信同步加碼', 'momentum.html', base)]
     if not latest_date:
         html.append('<div class="banner">尚無資料。</div>')
         html.append(foot(latest_date))
         return '\n'.join(html)
+
+    n_etf_universe = con.execute(
+        'SELECT COUNT(DISTINCT etf_id) FROM holdings WHERE date=?', (latest_date,)
+    ).fetchone()[0]
+
+    html.append(f'<p class="mute" style="margin:-8px 0 16px">'
+                f'跨 {n_etf_universe} 檔主動式 ETF，偵測短期內被多家投信同步增持的個股</p>')
 
     n_days = con.execute('SELECT COUNT(DISTINCT date) FROM holdings').fetchone()[0]
     if n_days < 2:
@@ -606,40 +705,174 @@ def page_momentum(con, latest_date, base=''):
         html.append(foot(latest_date))
         return '\n'.join(html)
 
-    cmp_date = con.execute('''SELECT MIN(date) FROM (
-        SELECT DISTINCT date FROM holdings WHERE date <= ? ORDER BY date DESC LIMIT 7
-    )''', (latest_date,)).fetchone()[0]
-    html.append(f'<div class="banner">比對窗口：{cmp_date} → {latest_date}（多家 ETF 同步加碼的股票）</div>')
+    # 取 N 天前的日期（N = 觀察窗口）
+    dates_all = [r[0] for r in con.execute('SELECT DISTINCT date FROM holdings ORDER BY date DESC')]
+    # 預設找最早 ~5 天前的可用日期，不夠就用最早的
+    idx = min(5, len(dates_all) - 1)
+    cmp_date = dates_all[idx] if idx < len(dates_all) else dates_all[-1]
+    # 實際時間差 (用日期差不是 dataframe index)
+    import datetime as _dt
+    actual_days = (_dt.date.fromisoformat(latest_date) - _dt.date.fromisoformat(cmp_date)).days
+    window_days = actual_days
+    min_etf_default = 2  # 預設 ≥2 家
 
+    # 控制列
+    html.append('<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0">')
+    html.append('<label style="color:#8b949e;font-size:13px">觀察天數：'
+                '<select id="winSel" style="background:#161b22;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;padding:5px 10px;font-size:13px">')
+    for n in [3, 5, 7, 14]:
+        sel = ' selected' if n == window_days else ''
+        avail = ' (不足)' if n > len(dates_all) - 1 else ''
+        html.append(f'<option value="{n}"{sel}>{n} 天{avail}</option>')
+    html.append('</select></label>')
+    html.append('<label style="color:#8b949e;font-size:13px">最少幾家：'
+                '<select id="minSel" style="background:#161b22;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;padding:5px 10px;font-size:13px">')
+    for n in [2, 3, 5, 8]:
+        sel = ' selected' if n == min_etf_default else ''
+        html.append(f'<option value="{n}"{sel}>≥ {n} 家</option>')
+    html.append('</select></label>')
+    html.append('<span class="mute" style="font-size:11px">JS 純前端 filter（不重新 query）</span>')
+    html.append('</div>')
+
+    # color legend
+    html.append('<div style="display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 16px;font-size:12px;color:#8b949e">'
+                '<span><span style="display:inline-block;width:12px;height:12px;background:#d29922;border-radius:50%;vertical-align:middle"></span> ≥ 8 家</span>'
+                '<span><span style="display:inline-block;width:12px;height:12px;background:#f0883e;border-radius:50%;vertical-align:middle"></span> 5-7 家</span>'
+                '<span><span style="display:inline-block;width:12px;height:12px;background:#3fb950;border-radius:50%;vertical-align:middle"></span> 3-4 家</span>'
+                '<span><span style="display:inline-block;width:12px;height:12px;background:#a371f7;border-radius:50%;vertical-align:middle"></span> 2 家</span>'
+                '</div>')
+
+    # 對每個 stock，找出在 (cmp_date, latest_date) 區間內，哪些 ETF 增持了
     rows = con.execute('''
-        WITH curr AS (SELECT etf_id, stock_id, stock_name, shares FROM holdings WHERE date=?),
-             base AS (SELECT etf_id, stock_id, shares AS sh_base FROM holdings WHERE date=?)
+        WITH curr AS (SELECT etf_id, stock_id, stock_name, weight AS w_curr FROM holdings WHERE date=?),
+             base AS (SELECT etf_id, stock_id, weight AS w_base FROM holdings WHERE date=?)
         SELECT c.stock_id, c.stock_name,
-               COUNT(*) AS n_etf_added,
-               GROUP_CONCAT(c.etf_id, ', ') AS etfs,
-               SUM(c.shares - COALESCE(b.sh_base,0)) AS total_added
+               c.etf_id,
+               c.w_curr - COALESCE(b.w_base, 0) AS w_diff
         FROM curr c LEFT JOIN base b ON c.etf_id=b.etf_id AND c.stock_id=b.stock_id
-        WHERE c.shares > COALESCE(b.sh_base, 0)
-        GROUP BY c.stock_id, c.stock_name
-        HAVING n_etf_added >= 2
-        ORDER BY n_etf_added DESC, total_added DESC
+        WHERE c.w_curr > COALESCE(b.w_base, 0)
     ''', (latest_date, cmp_date)).fetchall()
 
-    if not rows:
-        html.append('<div class="banner">尚無 ≥2 家同步加碼。</div>')
-    else:
-        html.append('<table class="sortable"><thead><tr>'
-                    '<th>個股</th><th>名稱</th><th>加碼 ETF 數</th>'
-                    '<th>ETF</th><th>合計加碼股數</th></tr></thead><tbody>')
-        for sid, sname, n, etfs, ta in rows:
-            html.append(f'<tr>'
-                        f'<td><a href="{base}stocks/{sid}.html">{sid}</a></td>'
-                        f'<td>{sname or NA}</td>'
-                        f'<td data-sort="{n}">{n}</td>'
-                        f'<td>{etfs}</td>'
-                        f'<td class="pos" data-sort="{ta}">+{ta:,}</td>'
-                        f'</tr>')
-        html.append('</tbody></table>')
+    # 各 ETF 名稱
+    etf_names = dict(con.execute('SELECT etf_id, etf_name FROM etf_meta').fetchall())
+
+    # 按 stock_id 聚合
+    from collections import defaultdict
+    by_stock = defaultdict(list)
+    sname_map = {}
+    for sid, sname, etf, w_diff in rows:
+        by_stock[sid].append((etf, w_diff))
+        sname_map[sid] = sname
+
+    # 過濾 ≥ min_etf_default + 排序
+    aggregated = []
+    for sid, etf_list in by_stock.items():
+        n = len(etf_list)
+        if n < 2:
+            continue
+        sum_w = sum(d for _e, d in etf_list)
+        max_w = max(d for _e, d in etf_list)
+        aggregated.append((sid, sname_map.get(sid, ''), n, sum_w, max_w, etf_list))
+    aggregated.sort(key=lambda x: (-x[2], -x[3]))
+
+    if not aggregated:
+        html.append('<div class="banner">尚無 ≥ 2 家同步加碼的個股。</div>')
+        html.append(foot(latest_date))
+        return '\n'.join(html)
+
+    # 摘要 banner
+    n_total = len(aggregated)
+    html.append(f'<div class="banner" style="border-left-color:#3fb950">'
+                f'過去 <b style="color:#3fb950">{window_days} 天</b> 內，'
+                f'找到 <b style="color:#58a6ff">{n_total} 檔</b>個股被 '
+                f'<b style="color:#3fb950">{min_etf_default} 家以上</b> 投信同步增持</div>')
+
+    # 卡片 grid
+    def _color(n):
+        if n >= 8: return '#d29922'
+        if n >= 5: return '#f0883e'
+        if n >= 3: return '#3fb950'
+        return '#a371f7'
+
+    html.append('<div id="momentumGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:12px">')
+    for sid, sname, n, sum_w, max_w, etf_list in aggregated:
+        color = _color(n)
+        etf_list_sorted = sorted(etf_list, key=lambda x: -x[1])
+        # 算 bar 寬：以該檔最大 increment 為 100%
+        max_diff = etf_list_sorted[0][1] or 0.01
+        # 前 3 家展開，其餘藏在 details
+        top3 = etf_list_sorted[:3]
+        rest = etf_list_sorted[3:]
+
+        card_id = f'card_{sid}'
+        html.append(f'<div class="mom-card" data-n="{n}" '
+                    f'style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px">'
+                    # 標頭：代號 / 名稱 / N 家圓圈
+                    f'<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px">'
+                    f'<div>'
+                    f'<div style="font-size:18px;font-weight:700"><a href="{base}stocks/{sid}.html">{sid}</a></div>'
+                    f'<div class="mute" style="font-size:13px">{sname or NA}</div>'
+                    f'</div>'
+                    f'<div style="background:rgba({{}});color:{color};border:2px solid {color};'
+                    f'border-radius:50%;width:50px;height:50px;display:flex;flex-direction:column;'
+                    f'align-items:center;justify-content:center;font-weight:700">'
+                    f'<div style="font-size:18px">{n}</div>'
+                    f'<div style="font-size:9px;color:{color}">家</div>'
+                    f'</div></div>'
+                    # 合計增幅 + 最大單筆
+                    f'<div style="display:flex;gap:14px;margin-bottom:10px;font-size:12px">'
+                    f'<div><span class="mute">合計增幅</span> '
+                    f'<b style="color:#3fb950">+{sum_w:.2f}%</b></div>'
+                    f'<div><span class="mute">最大單筆</span> '
+                    f'<b style="color:#3fb950">+{max_w:.2f}%</b></div>'
+                    f'</div>'
+                    # 進度條 list (top 3)
+                    f'<div style="display:flex;flex-direction:column;gap:6px">')
+        for etf, w_diff in top3:
+            bar_w = int(w_diff / max_diff * 180)
+            ename_short = (etf_names.get(etf, '') or '')[:8]
+            html.append(f'<div style="display:flex;align-items:center;gap:8px;font-size:11px">'
+                        f'<a href="{base}etfs/{etf}.html" style="min-width:80px">{ename_short}</a>'
+                        f'<div style="flex:1;background:#1c2128;border-radius:3px;height:6px;position:relative">'
+                        f'<div style="position:absolute;left:0;top:0;bottom:0;width:{bar_w}px;'
+                        f'background:linear-gradient(90deg,#3fb950,#58a6ff);border-radius:3px"></div></div>'
+                        f'<span style="color:#3fb950;min-width:55px;text-align:right">+{w_diff:.2f}%</span>'
+                        f'</div>')
+        if rest:
+            html.append(f'<details><summary class="mute" style="cursor:pointer;font-size:12px;text-align:center;padding:4px">▼ 展開全部 {n} 家</summary>')
+            for etf, w_diff in rest:
+                bar_w = int(w_diff / max_diff * 180)
+                ename_short = (etf_names.get(etf, '') or '')[:8]
+                html.append(f'<div style="display:flex;align-items:center;gap:8px;font-size:11px;margin-top:4px">'
+                            f'<a href="{base}etfs/{etf}.html" style="min-width:80px">{ename_short}</a>'
+                            f'<div style="flex:1;background:#1c2128;border-radius:3px;height:6px;position:relative">'
+                            f'<div style="position:absolute;left:0;top:0;bottom:0;width:{bar_w}px;'
+                            f'background:linear-gradient(90deg,#3fb950,#58a6ff);border-radius:3px"></div></div>'
+                            f'<span style="color:#3fb950;min-width:55px;text-align:right">+{w_diff:.2f}%</span>'
+                            f'</div>')
+            html.append('</details>')
+        html.append(f'</div>'
+                    f'<div class="mute" style="font-size:10px;margin-top:10px;text-align:right">'
+                    f'{cmp_date} → {latest_date}</div>'
+                    f'</div>')
+    html.append('</div>')
+
+    # JS: minSel filter cards by data-n
+    html.append('''<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var ms = document.getElementById('minSel');
+  var grid = document.getElementById('momentumGrid');
+  if(ms && grid){
+    ms.addEventListener('change', function(){
+      var min = parseInt(ms.value, 10);
+      grid.querySelectorAll('.mom-card').forEach(function(c){
+        c.style.display = parseInt(c.dataset.n, 10) >= min ? '' : 'none';
+      });
+    });
+  }
+});
+</script>''')
+
     html.append(foot(latest_date))
     return '\n'.join(html)
 

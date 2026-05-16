@@ -159,12 +159,13 @@ def render_stock_chart(stock_id: str) -> str:
         plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
         font=dict(color='#c9d1d9', size=11),
         xaxis_rangeslider_visible=False,
-        height=720,
-        margin=dict(l=10, r=10, t=60, b=10),
-        legend=dict(orientation='h', yanchor='bottom', y=1.05, xanchor='right', x=1,
+        height=740,
+        margin=dict(l=10, r=10, t=80, b=10),
+        legend=dict(orientation='h', yanchor='bottom', y=1.13, xanchor='right', x=1,
                     bgcolor='rgba(0,0,0,0)'),
-        title=dict(text=f'{ticker}　收盤 {last_close:.2f}　({last_date})',
-                   x=0.02, y=0.99, font=dict(size=13)),
+        # title 移到 chart 上方獨立一行（top-right），rangeselector 占 top-left
+        title=dict(text=f'<span style="font-size:13px">{ticker}　收盤 {last_close:.2f}　({last_date})</span>',
+                   x=1, xanchor='right', y=0.99, yanchor='top'),
         hovermode='x unified',
     )
     fig.update_xaxes(gridcolor='#21262d', rangeslider_visible=False, autorange=False)
