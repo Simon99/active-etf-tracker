@@ -27,10 +27,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","SF Pro Text",sa
 h1{font-size:24px;font-weight:600;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:16px}
 h2{font-size:18px;margin:28px 0 12px;color:#58a6ff;border-left:3px solid #58a6ff;padding-left:10px}
 h3{font-size:15px;margin:18px 0 8px;color:#c9d1d9}
-nav{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:13px}
+nav{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 nav a{color:#58a6ff;margin-right:14px;text-decoration:none}
 nav a:hover{text-decoration:underline}
 nav a.cur{color:#fff;font-weight:600}
+.freshness{font-size:12px;color:#8b949e;white-space:nowrap}
 table{border-collapse:collapse;font-size:12px;margin:8px 0;background:#161b22;width:100%}
 th{background:#21262d;color:#c9d1d9;padding:6px 8px;text-align:right;border:1px solid #30363d;cursor:pointer;user-select:none;font-weight:600;position:sticky;top:0}
 th:first-child,td:first-child{text-align:left}
@@ -75,6 +76,43 @@ document.addEventListener('DOMContentLoaded',()=>{
 """
 
 
+# 全站共用一個 build 時間戳（UTC ISO）— 給每頁的 freshness chip + index 大字
+BUILD_UTC = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
+BUILD_UTC_ISO = BUILD_UTC.isoformat()
+
+FRESHNESS_JS = """
+(function(){
+  function tick(){
+    document.querySelectorAll('[data-build-utc]').forEach(function(el){
+      var u = el.getAttribute('data-build-utc');
+      var d = new Date(u);
+      var now = new Date();
+      var diffMin = Math.floor((now - d) / 60000);
+      var diffH = diffMin / 60;
+      var diffD = diffH / 24;
+      var rel;
+      if (diffMin < 1) rel = '剛剛';
+      else if (diffMin < 60) rel = diffMin + ' 分鐘前';
+      else if (diffH < 24) rel = Math.floor(diffH) + ' 小時前';
+      else rel = Math.floor(diffD) + ' 天前';
+
+      var color = '#3fb950';      // 綠 < 12h
+      if (diffH >= 12) color = '#d29922';   // 黃 12h-3d
+      if (diffD >= 3)  color = '#f85149';   // 紅 > 3d
+
+      var local = d.toLocaleString('zh-TW', {hour12:false});
+      el.innerHTML = '<span style="color:' + color + '">●</span> ' +
+                     '<span title="' + local + ' (本機時區)">' + rel + '</span>';
+    });
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    tick();
+    setInterval(tick, 60000);   // 每分鐘更新「N 分鐘前」
+  });
+})();
+"""
+
+
 def head(title: str, current: str = '', base: str = '') -> str:
     pages = [
         ('index.html', '總覽'),
@@ -84,25 +122,28 @@ def head(title: str, current: str = '', base: str = '') -> str:
         ('momentum.html', '同步加碼'),
         ('radar.html', '新增/賣出雷達'),
     ]
-    nav = ' '.join(
+    nav_links = ' '.join(
         f'<a href="{base}{p}" class="{"cur" if p == current else ""}">{n}</a>'
         for p, n in pages
     )
+    nav_freshness = f'<span class="freshness" data-build-utc="{BUILD_UTC_ISO}">●</span>'
     return f'''<!DOCTYPE html>
 <html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}</title>
 <style>{CSS}</style>
 <script>{SORT_JS}</script>
+<script>{FRESHNESS_JS}</script>
 </head><body>
-<nav>{nav}</nav>
+<nav><span class="nav-links">{nav_links}</span>{nav_freshness}</nav>
 <h1>{title}</h1>
 '''
 
 
 def foot(latest_date: str | None) -> str:
-    ts = dt.datetime.now().strftime('%Y-%m-%d %H:%M')
-    return f'''<div class="foot">資料最新日期 {latest_date or NA}　·　頁面生成 {ts}　·
-<a href="https://github.com/Simon99/active-etf-tracker">原始碼</a></div>
+    return f'''<div class="foot">資料最新日期 {latest_date or NA}　·
+頁面生成 {BUILD_UTC.strftime('%Y-%m-%d %H:%M')} UTC　·
+<a href="https://github.com/Simon99/active-etf-tracker">原始碼</a>　·
+<a href="https://github.com/Simon99/active-etf-tracker/actions">Actions 歷史</a></div>
 </body></html>'''
 
 
@@ -143,6 +184,10 @@ def page_index(con, latest_date, base=''):
 <div class="metric">已接 fetcher<span class="v">{n_ready} / {n_total}</span></div>
 <div class="metric">已抓 AUM (B)<span class="v">{aum_total:,.1f}</span></div>
 <div class="metric">最新資料日期<span class="v">{latest_date or '&lt;NA&gt;'}</span></div>
+<div class="metric">上次自動更新
+  <span class="v" data-build-utc="{BUILD_UTC_ISO}" style="font-size:14px">●</span>
+  <small style="color:#8b949e;display:block;margin-top:4px;font-size:11px">{BUILD_UTC.strftime('%Y-%m-%d %H:%M')} UTC</small>
+</div>
 </div>''')
 
     html.append('<div class="toggle">'

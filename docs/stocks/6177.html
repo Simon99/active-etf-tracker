@@ -7,10 +7,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","SF Pro Text",sa
 h1{font-size:24px;font-weight:600;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:16px}
 h2{font-size:18px;margin:28px 0 12px;color:#58a6ff;border-left:3px solid #58a6ff;padding-left:10px}
 h3{font-size:15px;margin:18px 0 8px;color:#c9d1d9}
-nav{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:13px}
+nav{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 nav a{color:#58a6ff;margin-right:14px;text-decoration:none}
 nav a:hover{text-decoration:underline}
 nav a.cur{color:#fff;font-weight:600}
+.freshness{font-size:12px;color:#8b949e;white-space:nowrap}
 table{border-collapse:collapse;font-size:12px;margin:8px 0;background:#161b22;width:100%}
 th{background:#21262d;color:#c9d1d9;padding:6px 8px;text-align:right;border:1px solid #30363d;cursor:pointer;user-select:none;font-weight:600;position:sticky;top:0}
 th:first-child,td:first-child{text-align:left}
@@ -52,8 +53,39 @@ document.addEventListener('DOMContentLoaded',()=>{
   });
 });
 </script>
+<script>
+(function(){
+  function tick(){
+    document.querySelectorAll('[data-build-utc]').forEach(function(el){
+      var u = el.getAttribute('data-build-utc');
+      var d = new Date(u);
+      var now = new Date();
+      var diffMin = Math.floor((now - d) / 60000);
+      var diffH = diffMin / 60;
+      var diffD = diffH / 24;
+      var rel;
+      if (diffMin < 1) rel = '剛剛';
+      else if (diffMin < 60) rel = diffMin + ' 分鐘前';
+      else if (diffH < 24) rel = Math.floor(diffH) + ' 小時前';
+      else rel = Math.floor(diffD) + ' 天前';
+
+      var color = '#3fb950';      // 綠 < 12h
+      if (diffH >= 12) color = '#d29922';   // 黃 12h-3d
+      if (diffD >= 3)  color = '#f85149';   // 紅 > 3d
+
+      var local = d.toLocaleString('zh-TW', {hour12:false});
+      el.innerHTML = '<span style="color:' + color + '">●</span> ' +
+                     '<span title="' + local + ' (本機時區)">' + rel + '</span>';
+    });
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    tick();
+    setInterval(tick, 60000);   // 每分鐘更新「N 分鐘前」
+  });
+})();
+</script>
 </head><body>
-<nav><a href="../index.html" class="">總覽</a> <a href="../daily.html" class="">每日快照</a> <a href="../changes.html" class="">持股異動</a> <a href="../overlap.html" class="">持股重疊</a> <a href="../momentum.html" class="">同步加碼</a> <a href="../radar.html" class="">新增/賣出雷達</a></nav>
+<nav><span class="nav-links"><a href="../index.html" class="">總覽</a> <a href="../daily.html" class="">每日快照</a> <a href="../changes.html" class="">持股異動</a> <a href="../overlap.html" class="">持股重疊</a> <a href="../momentum.html" class="">同步加碼</a> <a href="../radar.html" class="">新增/賣出雷達</a></span><span class="freshness" data-build-utc="2026-05-16T09:22:14+00:00">●</span></nav>
 <h1>6177 達麗 — ETF 持有狀況</h1>
 
 <div class="banner">追蹤所有主動式 ETF 對 6177 的持有時序</div>
@@ -63,6 +95,8 @@ document.addEventListener('DOMContentLoaded',()=>{
 </tbody></table>
 <h2>持有規模時序</h2>
 <div class="banner">需累積至少 2 天才有時序資料。目前 1 天。</div>
-<div class="foot">資料最新日期 2026-05-16　·　頁面生成 2026-05-16 17:15　·
-<a href="https://github.com/Simon99/active-etf-tracker">原始碼</a></div>
+<div class="foot">資料最新日期 2026-05-16　·
+頁面生成 2026-05-16 09:22 UTC　·
+<a href="https://github.com/Simon99/active-etf-tracker">原始碼</a>　·
+<a href="https://github.com/Simon99/active-etf-tracker/actions">Actions 歷史</a></div>
 </body></html>
