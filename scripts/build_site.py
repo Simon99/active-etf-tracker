@@ -273,6 +273,11 @@ def page_overlap(con, latest_date, base=''):
         html.append(foot(latest_date))
         return '\n'.join(html)
 
+    n_etf_universe = con.execute(
+        'SELECT COUNT(DISTINCT etf_id) FROM holdings WHERE date=?',
+        (latest_date,)
+    ).fetchone()[0]
+
     rows = con.execute('''
         SELECT h.stock_id, h.stock_name,
                COUNT(DISTINCT h.etf_id) AS n_etf,
@@ -287,18 +292,38 @@ def page_overlap(con, latest_date, base=''):
 
     n_total = len(rows)
     n_multi = sum(1 for r in rows if r[2] >= 2)
-    html.append(f'<div class="banner">共 {n_total} 檔個股被持有，其中 {n_multi} 檔被 ≥2 家 ETF 持有。</div>')
+    html.append(f'<div class="banner">共 {n_total} 檔個股被持有，其中 {n_multi} 檔被 ≥2 家 ETF 持有。'
+                f'分母 {n_etf_universe} = 本日有抓到資料的主動式 ETF 檔數。</div>')
+
+    # 衍生欄位算法說明
+    html.append('''<div class="banner" style="border-left-color:#58a6ff">
+<strong>📐 衍生欄位怎麼算（重要）</strong>
+<ul style="margin-top:6px;padding-left:20px;line-height:1.8">
+<li><b>覆蓋率 %</b> = 持有它的 ETF 數 ÷ 本日全部主動 ETF 數
+  → 越高代表越多基金經理人「共識」買進，最直接的受歡迎度指標</li>
+<li><b>平均 weight (僅參考)</b> = 該股在「持有它的 ETF」內 weight 的算術平均
+  → 粗略代表「對持有它的 ETF 是不是大部位」，但**忽略各 ETF AUM 大小差異**</li>
+<li><b>合計 weight (僅供排序)</b> = 把 N 個 weight 直接加總
+  → ⚠ <b>數學上沒物理意義</b>。weight 的基數（各 ETF 淨資產）不同不能直接加。
+  保留只是因為剛好能反映「N × avg_w」的視覺重量，但別當實際比例看</li>
+</ul>
+<small>真正有意義的「綜合權重 = Σ(weight × AUM) / Σ(AUM)」需先補 AUM 入庫（部分 fetcher 還沒寫），等做完功能 5 一起補。</small>
+</div>''')
+
     html.append('<table class="sortable"><thead><tr>'
-                '<th>個股</th><th>名稱</th><th>持有 ETF 數</th><th>持有 ETF</th>'
-                '<th>平均權重 %</th><th>合計權重 %</th></tr></thead><tbody>')
+                '<th>個股</th><th>名稱</th><th>持有 ETF 數</th>'
+                '<th>覆蓋率 %</th><th>持有 ETF</th>'
+                '<th>平均 weight</th><th>合計 weight</th></tr></thead><tbody>')
     for sid, sname, n, etfs, avg_w, sum_w in rows:
+        coverage = (n / n_etf_universe * 100) if n_etf_universe else 0
         html.append(f'<tr>'
                     f'<td><a href="{base}stocks/{sid}.html">{sid}</a></td>'
                     f'<td>{sname or NA}</td>'
                     f'<td data-sort="{n}">{n}</td>'
+                    f'<td data-sort="{coverage}">{coverage:.1f}%</td>'
                     f'<td>{etfs}</td>'
                     f'<td data-sort="{avg_w or 0}">{fmt_pct(avg_w)}</td>'
-                    f'<td data-sort="{sum_w or 0}">{fmt_pct(sum_w)}</td>'
+                    f'<td data-sort="{sum_w or 0}" class="mute">{fmt_pct(sum_w)}</td>'
                     f'</tr>')
     html.append('</tbody></table>')
     html.append(foot(latest_date))
