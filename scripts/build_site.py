@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / 'scripts'))
 from etf_chart import render_chart  # noqa: E402
 from stock_chart import render_stock_chart  # noqa: E402
+from etf_indicators import fetch_etf_df, compute_indicators  # noqa: E402
 
 DB = ROOT / 'data' / 'holdings.db'
 OUT = ROOT / 'docs'
@@ -47,9 +48,42 @@ tr:hover td{background:#1c2128}
 a{color:#58a6ff;text-decoration:none}
 a:hover{text-decoration:underline}
 .tag{display:inline-block;padding:2px 6px;border-radius:3px;background:#21262d;font-size:11px;margin-right:4px}
-.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}
-.metric{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:10px;font-size:12px}
-.metric .v{font-size:18px;font-weight:600;color:#58a6ff;display:block;margin-top:2px}
+
+/* ---- 大型 metric cards (新版) ---- */
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:14px 0}
+.metric{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px 16px;font-size:12px;position:relative}
+.metric .label{color:#8b949e;font-size:12px;display:flex;align-items:center;gap:6px}
+.metric .v{font-size:26px;font-weight:700;color:#58a6ff;display:block;margin-top:6px;line-height:1.1;font-variant-numeric:tabular-nums}
+.metric.pos .v{color:#3fb950}.metric.neg .v{color:#f85149}.metric.warn .v{color:#d29922}.metric.info .v{color:#a371f7}
+.metric.lg .v{font-size:30px}
+.metric .sub{color:#6e7681;font-size:11px;margin-top:4px}
+
+/* ---- action pill (加碼 / 減碼 / 新增 / 出清) ---- */
+.pill{display:inline-block;padding:2px 9px;border-radius:4px;font-size:11px;font-weight:600;border:1px solid transparent}
+.pill-add{background:rgba(63,185,80,.15);color:#3fb950;border-color:rgba(63,185,80,.3)}
+.pill-cut{background:rgba(248,81,73,.15);color:#f85149;border-color:rgba(248,81,73,.3)}
+.pill-up{background:rgba(63,185,80,.15);color:#3fb950;border-color:rgba(63,185,80,.3)}
+.pill-down{background:rgba(210,153,34,.15);color:#d29922;border-color:rgba(210,153,34,.3)}
+.pill-new{background:rgba(31,111,235,.15);color:#58a6ff;border-color:rgba(31,111,235,.3)}
+.pill-flat{background:rgba(110,118,129,.15);color:#8b949e;border-color:rgba(110,118,129,.3)}
+
+/* ---- bar 進度條 (table cell 內) ---- */
+.bar{display:inline-block;height:6px;background:#1f6feb;border-radius:3px;vertical-align:middle;min-width:1px}
+.bar-cell{display:flex;align-items:center;gap:6px;justify-content:flex-start}
+.bar-cell .bar{flex:0 0 auto}
+
+/* ---- sparkline (近 N 日趨勢迷你 bar) ---- */
+.sparkline{display:inline-flex;align-items:flex-end;gap:1px;height:18px;min-width:30px}
+.sparkline span{width:3px;background:#30363d;border-radius:1px 1px 0 0}
+.sparkline span.up{background:#3fb950}.sparkline span.down{background:#f85149}
+
+/* ---- filter tabs ---- */
+.filter-tabs{display:inline-flex;gap:6px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:4px;margin:10px 0;flex-wrap:wrap}
+.filter-tabs button{background:transparent;color:#8b949e;border:none;padding:6px 14px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit}
+.filter-tabs button:hover{color:#c9d1d9}
+.filter-tabs button.cur{background:#1f6feb;color:#fff}
+
+/* ---- 已存在 ---- */
 .banner{background:#1c2128;border:1px solid #30363d;border-left:3px solid #d29922;border-radius:6px;padding:10px 14px;margin:12px 0;font-size:13px;color:#c9d1d9}
 .toggle{display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:4px;margin-bottom:12px}
 .toggle a{display:inline-block;padding:5px 12px;border-radius:4px;font-size:13px}
@@ -137,6 +171,7 @@ def head(title: str, current: str = '', base: str = '') -> str:
 <style>{CSS}</style>
 <script>{SORT_JS}</script>
 <script>{FRESHNESS_JS}</script>
+<script>{FILTER_TABS_JS}</script>
 </head><body>
 <nav><span class="nav-links">{nav_links}</span>{nav_freshness}</nav>
 <h1>{title}</h1>
@@ -161,6 +196,79 @@ def fmt_num(v, suffix=''):
 
 def fmt_pct(v):
     return NA if v is None else f'{v:.2f}%'
+
+
+# ───────────────── 共用 render helpers ─────────────────
+def metric_card(label: str, value: str, cls: str = '', sub: str = '', emoji: str = '') -> str:
+    em = f'<span>{emoji}</span> ' if emoji else ''
+    sub_html = f'<div class="sub">{sub}</div>' if sub else ''
+    return (f'<div class="metric {cls}"><div class="label">{em}{label}</div>'
+            f'<span class="v">{value}</span>{sub_html}</div>')
+
+
+def pill(action: str) -> str:
+    """加碼/減碼/新增/出清/不變 → 帶色 pill"""
+    cls = {
+        '加碼': 'pill-add', '減碼': 'pill-down',
+        '新增': 'pill-new', '出清': 'pill-cut',
+        '不變': 'pill-flat',
+    }.get(action, 'pill-flat')
+    return f'<span class="pill {cls}">{action}</span>'
+
+
+def bar_cell(percent: float, max_pct: float = 10.0, txt: str = '') -> str:
+    """權重比視覺化（max_pct 用來把最大值映射到 100% 寬，bar 最大 120px）"""
+    if percent is None or percent <= 0:
+        width = 0
+    else:
+        width = min(120, int(percent / max_pct * 120))
+    color = '#1f6feb' if percent < max_pct * 0.5 else '#a371f7' if percent < max_pct * 0.8 else '#d29922'
+    txt = txt or f'{percent:.2f}%'
+    return (f'<div class="bar-cell"><span class="bar" '
+            f'style="width:{width}px;background:{color}"></span>'
+            f'<span style="color:#c9d1d9">{txt}</span></div>')
+
+
+def sparkline(values: list, max_h: int = 18) -> str:
+    """近 N 日 mini bar chart。values list 含 None/數值。"""
+    if not values or all(v is None for v in values):
+        return '<span class="mute" style="font-size:10px">N/A</span>'
+    nums = [v if v is not None else 0 for v in values]
+    if all(v == 0 for v in nums):
+        return ''.join(f'<span style="height:1px"></span>' for _ in nums)
+    mx = max(abs(v) for v in nums) or 1
+    spans = []
+    for v in nums:
+        if v is None:
+            spans.append('<span style="height:2px;background:#30363d"></span>')
+            continue
+        h = max(2, int(abs(v) / mx * max_h))
+        cls = 'up' if v >= 0 else 'down'
+        spans.append(f'<span class="{cls}" style="height:{h}px"></span>')
+    return f'<span class="sparkline">{"".join(spans)}</span>'
+
+
+FILTER_TABS_JS = """
+function setupFilterTabs(tabsId, tableId) {
+  var tabs = document.getElementById(tabsId);
+  var table = document.getElementById(tableId);
+  if (!tabs || !table) return;
+  tabs.querySelectorAll('button').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      tabs.querySelectorAll('button').forEach(function(b){b.classList.remove('cur');});
+      btn.classList.add('cur');
+      var f = btn.getAttribute('data-filter');
+      table.querySelectorAll('tbody tr').forEach(function(tr) {
+        if (f === 'all' || tr.getAttribute('data-action') === f) {
+          tr.style.display = '';
+        } else {
+          tr.style.display = 'none';
+        }
+      });
+    });
+  });
+}
+"""
 
 
 # ──────────────────────────────────────────────────────────
@@ -268,11 +376,13 @@ def page_daily(con, latest_date, base=''):
 
 
 def page_changes(con, latest_date, base=''):
-    html = [head(f'持股異動 — {latest_date or "&lt;NA&gt;"} vs 前一交易日', 'changes.html', base)]
+    html = [head(f'持股異動偵測', 'changes.html', base)]
     if not latest_date:
         html.append('<div class="banner">尚無資料。</div>')
         html.append(foot(latest_date))
         return '\n'.join(html)
+
+    html.append('<p class="mute" style="margin:-8px 0 16px">今日 vs 前一交易日的成分股變化</p>')
 
     prev = con.execute('SELECT MAX(date) FROM holdings WHERE date < ?', (latest_date,)).fetchone()[0]
     if not prev:
@@ -280,37 +390,141 @@ def page_changes(con, latest_date, base=''):
         html.append(foot(latest_date))
         return '\n'.join(html)
 
-    html.append(f'<div class="banner">比對 {prev} → {latest_date}</div>')
     rows = con.execute('''
         WITH curr AS (SELECT etf_id, stock_id, stock_name, shares, weight FROM holdings WHERE date=?),
              prev AS (SELECT etf_id, stock_id, shares AS sh_prev, weight AS w_prev FROM holdings WHERE date=?)
         SELECT COALESCE(c.etf_id, p.etf_id) AS etf,
                COALESCE(c.stock_id, p.stock_id) AS sid,
-               c.stock_name,
-               c.shares, c.weight, p.sh_prev, p.w_prev
+               COALESCE(c.stock_name, '') AS sname,
+               COALESCE(c.shares, 0) AS sh,
+               COALESCE(c.weight, 0) AS w,
+               COALESCE(p.sh_prev, 0) AS sh_p,
+               COALESCE(p.w_prev, 0) AS w_p
         FROM curr c FULL OUTER JOIN prev p ON c.etf_id=p.etf_id AND c.stock_id=p.stock_id
-        WHERE COALESCE(c.shares,0) != COALESCE(p.sh_prev,0)
     ''', (latest_date, prev)).fetchall()
 
-    if not rows:
-        html.append('<div class="banner">無變動。</div>')
-    else:
-        html.append('<table class="sortable"><thead><tr>'
-                    '<th>類型</th><th>ETF</th><th>個股</th><th>個股名</th>'
-                    '<th>前股數</th><th>今股數</th><th>差</th></tr></thead><tbody>')
-        for etf, sid, sname, sh, w, sh_p, w_p in rows:
-            sh = sh or 0
-            sh_p = sh_p or 0
-            diff = sh - sh_p
-            kind = '新增' if sh_p == 0 else ('清空' if sh == 0 else ('加碼' if diff > 0 else '減碼'))
-            cls = 'pos' if diff > 0 else 'neg'
-            html.append(f'<tr><td>{kind}</td><td>{etf}</td>'
-                        f'<td><a href="{base}stocks/{sid}.html">{sid}</a></td>'
-                        f'<td>{sname or NA}</td>'
-                        f'<td>{fmt_num(sh_p)}</td>'
-                        f'<td>{fmt_num(sh)}</td>'
-                        f'<td class="{cls}" data-sort="{diff}">{diff:+,}</td></tr>')
-        html.append('</tbody></table>')
+    # 分類統計 + 取近 5 日權重序列 for sparkline
+    last5_dates = [r[0] for r in con.execute(
+        'SELECT DISTINCT date FROM holdings WHERE date<=? ORDER BY date DESC LIMIT 5', (latest_date,)
+    )]
+    last5_dates.reverse()   # 由舊到新
+
+    counts = {'新增': 0, '出清': 0, '加碼': 0, '減碼': 0, '不變': 0}
+    table_rows = []
+    for etf, sid, sname, sh, w, sh_p, w_p in rows:
+        sh = sh or 0
+        sh_p = sh_p or 0
+        diff_sh = sh - sh_p
+        diff_w = (w or 0) - (w_p or 0)
+        if sh_p == 0 and sh > 0:
+            action = '新增'
+        elif sh > 0 and sh_p > 0 and diff_sh == 0:
+            action = '不變'
+        elif sh == 0 and sh_p > 0:
+            action = '出清'
+        elif diff_sh > 0:
+            action = '加碼'
+        elif diff_sh < 0:
+            action = '減碼'
+        else:
+            action = '不變'
+        counts[action] += 1
+        # 近 5 日權重 sparkline
+        ts_rows = con.execute(
+            'SELECT date, weight FROM holdings WHERE etf_id=? AND stock_id=? AND date IN ({})'.format(
+                ','.join('?' * len(last5_dates))),
+            (etf, sid, *last5_dates)
+        ).fetchall()
+        ts_map = {d: w for d, w in ts_rows}
+        spark_vals = [ts_map.get(d) for d in last5_dates]
+        table_rows.append((etf, sid, sname, sh, sh_p, diff_sh, w, w_p, diff_w, action, spark_vals))
+
+    # 5 個 metric cards
+    html.append('<div class="metric-grid">')
+    html.append(metric_card('新增', str(counts['新增']), 'info',
+                            emoji='🟢' if counts['新增'] else '⚪'))
+    html.append(metric_card('出清', str(counts['出清']), 'neg',
+                            emoji='🔴' if counts['出清'] else '⚪'))
+    html.append(metric_card('加碼', str(counts['加碼']), 'pos',
+                            emoji='📈' if counts['加碼'] else '⚪'))
+    html.append(metric_card('減碼', str(counts['減碼']), 'warn',
+                            emoji='📉' if counts['減碼'] else '⚪'))
+    html.append(metric_card('不變', str(counts['不變']), 'mute'))
+    html.append('</div>')
+
+    # ETF dropdown filter
+    etfs_in_data = sorted(set(r[0] for r in table_rows))
+    html.append(f'<div style="margin:18px 0 8px">'
+                f'<span style="color:#8b949e;font-size:13px">比對 <b style="color:#c9d1d9">{prev}</b> → '
+                f'<b style="color:#c9d1d9">{latest_date}</b>&nbsp;&nbsp;</span>'
+                f'<label style="color:#8b949e;font-size:13px;margin-left:14px">ETF：'
+                f'<select id="etfFilter" style="background:#161b22;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;padding:5px 10px;font-size:13px">'
+                f'<option value="all">全部 ({len(etfs_in_data)} 檔)</option>')
+    for e in etfs_in_data:
+        html.append(f'<option value="{e}">{e}</option>')
+    html.append('</select></label></div>')
+
+    # Filter tabs
+    html.append('<div class="filter-tabs" id="actionTabs">')
+    total = sum(counts.values())
+    html.append(f'<button class="cur" data-filter="all">全部 ({total})</button>')
+    for act in ['新增', '加碼', '減碼', '出清', '不變']:
+        if counts[act]:
+            html.append(f'<button data-filter="{act}">{act} ({counts[act]})</button>')
+    html.append('</div>')
+
+    # 表格
+    html.append('<table id="changesTable" class="sortable"><thead><tr>'
+                '<th>狀態</th><th>ETF</th><th>代號</th><th>名稱</th>'
+                '<th>今日 %</th><th>前日 %</th><th>權重變動</th>'
+                '<th>股數變動</th><th>近 5 日趨勢</th></tr></thead><tbody>')
+    # 排序：先 |diff_sh| 大的，再加碼/減碼 在前
+    table_rows.sort(key=lambda r: (r[9] == '不變', -abs(r[5])))
+    for etf, sid, sname, sh, sh_p, diff_sh, w, w_p, diff_w, action, spark in table_rows:
+        cls_diff = 'pos' if diff_sh > 0 else ('neg' if diff_sh < 0 else 'mute')
+        diff_w_cls = 'pos' if diff_w > 0 else ('neg' if diff_w < 0 else 'mute')
+        html.append(f'<tr data-action="{action}" data-etf="{etf}">'
+                    f'<td>{pill(action)}</td>'
+                    f'<td><a href="{base}etfs/{etf}.html">{etf}</a></td>'
+                    f'<td><a href="{base}stocks/{sid}.html">{sid}</a></td>'
+                    f'<td>{sname or NA}</td>'
+                    f'<td>{fmt_pct(w)}</td>'
+                    f'<td class="mute">{fmt_pct(w_p)}</td>'
+                    f'<td class="{diff_w_cls}" data-sort="{diff_w}">{diff_w:+.2f}%</td>'
+                    f'<td class="{cls_diff}" data-sort="{diff_sh}">{diff_sh:+,}</td>'
+                    f'<td>{sparkline(spark)}</td>'
+                    f'</tr>')
+    html.append('</tbody></table>')
+
+    # 啟用 filter tabs + ETF dropdown（合併兩 filter 的統一 handler）
+    html.append('''<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var table = document.getElementById('changesTable');
+  var tabs = document.getElementById('actionTabs');
+  var sel = document.getElementById('etfFilter');
+  var st = {action: 'all', etf: 'all'};
+  function apply(){
+    table.querySelectorAll('tbody tr').forEach(function(tr){
+      var okA = (st.action === 'all') || (tr.getAttribute('data-action') === st.action);
+      var okE = (st.etf === 'all') || (tr.getAttribute('data-etf') === st.etf);
+      tr.style.display = (okA && okE) ? '' : 'none';
+    });
+  }
+  tabs.querySelectorAll('button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tabs.querySelectorAll('button').forEach(function(b){b.classList.remove('cur');});
+      btn.classList.add('cur');
+      st.action = btn.getAttribute('data-filter');
+      apply();
+    });
+  });
+  sel.addEventListener('change', function(){
+    st.etf = sel.value;
+    apply();
+  });
+});
+</script>''')
+
     html.append(foot(latest_date))
     return '\n'.join(html)
 
@@ -431,20 +645,27 @@ def page_momentum(con, latest_date, base=''):
 
 
 def page_radar(con, latest_date, base=''):
-    html = [head(f'新增 / 賣出雷達 — {latest_date or "&lt;NA&gt;"}', 'radar.html', base)]
+    html = [head('新增 / 賣出雷達', 'radar.html', base)]
     if not latest_date:
         html.append('<div class="banner">尚無資料。</div>')
         html.append(foot(latest_date))
         return '\n'.join(html)
 
     prev = con.execute('SELECT MAX(date) FROM holdings WHERE date < ?', (latest_date,)).fetchone()[0]
+    n_etf_universe = con.execute(
+        'SELECT COUNT(DISTINCT etf_id) FROM holdings WHERE date=?', (latest_date,)
+    ).fetchone()[0]
+
+    html.append(f'<p class="mute" style="margin:-8px 0 16px">'
+                f'全部 {n_etf_universe} 檔主動式 ETF · '
+                f'比對 {prev or "&lt;NA&gt;"} → {latest_date}</p>')
+
     if not prev:
         html.append(f'<div class="banner">需累積至少 2 個交易日資料。目前只有 {latest_date} 一天。</div>')
         html.append(foot(latest_date))
         return '\n'.join(html)
 
-    html.append(f'<div class="banner">{prev} → {latest_date}</div>')
-
+    # 新增 (D-1 沒 + D 有)
     new_rows = con.execute('''
         SELECT c.etf_id, c.stock_id, c.stock_name, c.shares, c.weight
         FROM holdings c LEFT JOIN holdings p
@@ -453,6 +674,7 @@ def page_radar(con, latest_date, base=''):
         ORDER BY c.etf_id, c.weight DESC
     ''', (prev, latest_date)).fetchall()
 
+    # 出清 (D-1 有 + D 沒)
     sold_rows = con.execute('''
         SELECT p.etf_id, p.stock_id, p.stock_name, p.shares, p.weight
         FROM holdings p LEFT JOIN holdings c
@@ -461,35 +683,144 @@ def page_radar(con, latest_date, base=''):
         ORDER BY p.etf_id, p.weight DESC
     ''', (latest_date, prev)).fetchall()
 
-    html.append(f'<h2>新增雷達 ({len(new_rows)} 筆)</h2>')
-    if not new_rows:
-        html.append('<div class="banner">無新增。</div>')
-    else:
+    # 減持 (D-1 + D 都有，weight 降)
+    cut_rows = con.execute('''
+        SELECT c.etf_id, c.stock_id, c.stock_name,
+               c.shares AS sh_c, p.shares AS sh_p,
+               c.weight AS w_c, p.weight AS w_p
+        FROM holdings c JOIN holdings p
+          ON p.etf_id=c.etf_id AND p.stock_id=c.stock_id
+        WHERE c.date=? AND p.date=? AND c.shares < p.shares
+    ''', (latest_date, prev)).fetchall()
+
+    # 分組：每個 ETF 的新增、出清、減持各幾筆
+    from collections import defaultdict
+    new_by_etf = defaultdict(list)
+    for etf, sid, sname, sh, w in new_rows:
+        new_by_etf[etf].append((sid, sname, sh, w))
+    sold_by_etf = defaultdict(list)
+    for etf, sid, sname, sh, w in sold_rows:
+        sold_by_etf[etf].append((sid, sname, sh, w))
+    cut_by_etf = defaultdict(list)
+    for etf, sid, sname, sh_c, sh_p, w_c, w_p in cut_rows:
+        cut_by_etf[etf].append((sid, sname, sh_c, sh_p, w_c, w_p))
+
+    n_etf_with_new = len(new_by_etf)
+    n_etf_with_sold = len(sold_by_etf) | len(cut_by_etf)  # noqa — placeholder
+    n_etf_with_sold = len(set(list(sold_by_etf.keys()) + list(cut_by_etf.keys())))
+
+    # 同步增 / 減 = 多家 ETF 同時對同一檔股票做相同動作
+    from collections import Counter
+    synced_new = Counter(sid for _e, sid, *_ in new_rows)
+    synced_sold = Counter(sid for _e, sid, *_ in sold_rows)
+    # 減持也算「同步減碼」一部分
+    synced_cut = Counter(sid for _e, sid, *_ in cut_rows)
+    synced_sold_or_cut = Counter()
+    for sid, c in (synced_sold + synced_cut).items():
+        synced_sold_or_cut[sid] = c
+
+    n_synced_new = sum(1 for c in synced_new.values() if c >= 2)
+    n_synced_sold = sum(1 for c in synced_sold_or_cut.values() if c >= 2)
+
+    # ───────── 新增雷達 section ─────────
+    html.append('<h2>🟢 新增雷達</h2>')
+    html.append('<div class="metric-grid">')
+    html.append(metric_card('有新增的 ETF', f'{n_etf_with_new} 檔', 'pos', emoji='🟢'))
+    html.append(metric_card('新增個股筆數', f'{len(new_rows)} 筆', 'pos'))
+    html.append(metric_card('多家同步新增', f'{n_synced_new} 檔', 'info', emoji='🎯',
+                            sub='≥ 2 家 ETF 同時新增'))
+    html.append('</div>')
+
+    # 多家同步新增 list
+    if n_synced_new:
+        html.append('<h3 style="color:#3fb950">多家同步新增 (≥ 2 家)</h3>')
+        sname_map = {sid: sname for _e, sid, sname, *_ in new_rows}
+        synced_list = sorted([(c, sid) for sid, c in synced_new.items() if c >= 2], reverse=True)
         html.append('<table class="sortable"><thead><tr>'
-                    '<th>ETF</th><th>個股</th><th>名稱</th>'
-                    '<th>建倉股數</th><th>權重 %</th></tr></thead><tbody>')
-        for etf, sid, sname, sh, w in new_rows:
-            html.append(f'<tr><td>{etf}</td>'
+                    '<th>排名</th><th>共幾家</th><th>個股</th><th>名稱</th></tr></thead><tbody>')
+        for i, (n, sid) in enumerate(synced_list, 1):
+            html.append(f'<tr><td>#{i}</td>'
+                        f'<td><b style="color:#3fb950">{n}</b> 家</td>'
                         f'<td><a href="{base}stocks/{sid}.html">{sid}</a></td>'
-                        f'<td>{sname or NA}</td>'
-                        f'<td class="pos">{fmt_num(sh)}</td>'
-                        f'<td>{fmt_pct(w)}</td></tr>')
+                        f'<td>{sname_map.get(sid, NA)}</td></tr>')
         html.append('</tbody></table>')
 
-    html.append(f'<h2>賣出雷達 ({len(sold_rows)} 筆)</h2>')
-    if not sold_rows:
-        html.append('<div class="banner">無清空。</div>')
+    # 各 ETF 新增明細卡片
+    if new_by_etf:
+        html.append('<h3>各 ETF 新增明細</h3>')
+        html.append('<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:10px">')
+        for etf in sorted(new_by_etf.keys()):
+            stocks = new_by_etf[etf]
+            etf_meta = con.execute('SELECT etf_name FROM etf_meta WHERE etf_id=?', (etf,)).fetchone()
+            ename = etf_meta[0] if etf_meta else ''
+            html.append(f'<div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px">'
+                        f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
+                        f'<div><a href="{base}etfs/{etf}.html" style="font-weight:600">{etf}</a> '
+                        f'<span class="mute" style="font-size:12px">{ename}</span></div>'
+                        f'<span class="pill pill-add">+{len(stocks)} 檔</span></div>'
+                        f'<div style="display:flex;flex-wrap:wrap;gap:6px">')
+            for sid, sname, sh, w in stocks:
+                html.append(f'<a href="{base}stocks/{sid}.html" class="tag" '
+                            f'style="background:rgba(63,185,80,.1);color:#3fb950;border:1px solid rgba(63,185,80,.2)">'
+                            f'{sid} {sname or ""} <span class="mute">+{w:.2f}%</span></a>')
+            html.append('</div></div>')
+        html.append('</div>')
     else:
+        html.append('<div class="banner">本日無新增。</div>')
+
+    # ───────── 賣出雷達 section ─────────
+    html.append('<h2 style="margin-top:32px">🔴 賣出雷達</h2>')
+    html.append('<div class="metric-grid">')
+    html.append(metric_card('有減碼的 ETF', f'{n_etf_with_sold} 檔', 'warn', emoji='🔴'))
+    html.append(metric_card('移除個股', f'{len(sold_rows)} 筆', 'neg',
+                            sub='完全出清'))
+    html.append(metric_card('減持個股', f'{len(cut_rows)} 筆', 'warn',
+                            sub='股數降低'))
+    html.append(metric_card('多家同步減碼', f'{n_synced_sold} 檔', 'info', emoji='🎯',
+                            sub='≥ 2 家 ETF 同時'))
+    html.append('</div>')
+
+    # 多家同步減碼 ranking
+    if n_synced_sold:
+        html.append('<h3 style="color:#f85149">多家同步減碼 (≥ 2 家，含出清 + 減持)</h3>')
+        sname_map_all = {sid: sname for _e, sid, sname, *_ in (sold_rows + [(e, s, sn, c, p, wc, wp) for e, s, sn, c, p, wc, wp in cut_rows])}
+        synced_list = sorted([(c, sid) for sid, c in synced_sold_or_cut.items() if c >= 2], reverse=True)
+        # 算總減持百分比
+        max_n = synced_list[0][0] if synced_list else 1
         html.append('<table class="sortable"><thead><tr>'
-                    '<th>ETF</th><th>個股</th><th>名稱</th>'
-                    '<th>清倉前股數</th><th>原權重 %</th></tr></thead><tbody>')
-        for etf, sid, sname, sh, w in sold_rows:
-            html.append(f'<tr><td>{etf}</td>'
+                    '<th>排名</th><th>共幾家</th><th>個股</th><th>名稱</th><th>視覺</th></tr></thead><tbody>')
+        for i, (n, sid) in enumerate(synced_list[:20], 1):
+            bar_w = int(n / max_n * 200)
+            html.append(f'<tr><td>#{i}</td>'
+                        f'<td><b style="color:#f85149">{n}</b> 家</td>'
                         f'<td><a href="{base}stocks/{sid}.html">{sid}</a></td>'
-                        f'<td>{sname or NA}</td>'
-                        f'<td class="neg">{fmt_num(sh)}</td>'
-                        f'<td>{fmt_pct(w)}</td></tr>')
+                        f'<td>{sname_map_all.get(sid, NA)}</td>'
+                        f'<td><div class="bar-cell"><span class="bar" style="width:{bar_w}px;'
+                        f'background:linear-gradient(90deg,#f85149,#d29922)"></span>'
+                        f'<span class="mute" style="font-size:11px">{n} ETF</span></div></td>'
+                        f'</tr>')
         html.append('</tbody></table>')
+
+    # 出清明細
+    if sold_rows:
+        html.append('<h3>各 ETF 出清明細</h3>')
+        html.append('<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:10px">')
+        for etf in sorted(sold_by_etf.keys()):
+            stocks = sold_by_etf[etf]
+            etf_meta = con.execute('SELECT etf_name FROM etf_meta WHERE etf_id=?', (etf,)).fetchone()
+            ename = etf_meta[0] if etf_meta else ''
+            html.append(f'<div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px">'
+                        f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
+                        f'<div><a href="{base}etfs/{etf}.html" style="font-weight:600">{etf}</a> '
+                        f'<span class="mute" style="font-size:12px">{ename}</span></div>'
+                        f'<span class="pill pill-cut">-{len(stocks)} 檔</span></div>'
+                        f'<div style="display:flex;flex-wrap:wrap;gap:6px">')
+            for sid, sname, sh, w in stocks:
+                html.append(f'<a href="{base}stocks/{sid}.html" class="tag" '
+                            f'style="background:rgba(248,81,73,.1);color:#f85149;border:1px solid rgba(248,81,73,.2)">'
+                            f'{sid} {sname or ""} <span class="mute">原 {w:.2f}%</span></a>')
+            html.append('</div></div>')
+        html.append('</div>')
 
     html.append(foot(latest_date))
     return '\n'.join(html)
@@ -563,15 +894,96 @@ def page_etf(con, etf_id, latest_date, base='../'):
     elif hn is None:
         html.append('<div class="banner">fetcher 已接但尚未抓到當日資料。</div>')
 
-    html.append(f'''<div class="metric-grid">
-<div class="metric">NAV<span class="v">{fmt_num(nav)}</span></div>
-<div class="metric">基金規模 (B)<span class="v">{fmt_num(aum)}</span></div>
-<div class="metric">受益權單位<span class="v">{fmt_num(units)}</span></div>
-<div class="metric">持股數<span class="v">{hn if hn is not None else NA}</span></div>
-<div class="metric">快照日期<span class="v">{snap_date or NA}</span></div>
-</div>''')
+    # 規模警示（< 10 億）
+    aum_warn = ''
+    if aum is not None and aum < 1.0:
+        aum_warn = ('<div class="banner" style="border-left-color:#f85149;background:rgba(248,81,73,.08)">'
+                    f'⚠ 基金規模僅 <b>{aum:.2f} B</b>（不到 10 億），流動性可能不足，建議審慎評估</div>')
+    elif aum is not None and aum < 5.0:
+        aum_warn = ('<div class="banner" style="border-left-color:#d29922">'
+                    f'ℹ 基金規模 <b>{aum:.2f} B</b>，規模偏小（< 50 億），請留意流動性</div>')
+    if aum_warn:
+        html.append(aum_warn)
 
-    html.append('<h2>① 技術線型（最近 2 年日線）</h2>')
+    # ──── 技術指標 metric cards（從 yfinance 算）────
+    df = fetch_etf_df(etf_id)
+    ind = compute_indicators(df) if df is not None else {}
+
+    def _fmt_signed(v, suffix='', decimals=2):
+        if v is None:
+            return NA
+        sign = '+' if v >= 0 else ''
+        return f'{sign}{v:.{decimals}f}{suffix}'
+
+    def _ind_cls(v, pos_thr=0, neg_thr=0):
+        if v is None:
+            return ''
+        if v > pos_thr:
+            return 'pos'
+        if v < neg_thr:
+            return 'neg'
+        return ''
+
+    html.append('<h2>📊 即時技術指標</h2>')
+    html.append('<div class="metric-grid">')
+    if ind:
+        # 收盤 + 漲跌
+        chg_html = (f'<span style="color:{"#3fb950" if ind["chg"] >= 0 else "#f85149"}">'
+                    f'{_fmt_signed(ind["chg"])} ({_fmt_signed(ind["chg_pct"], "%")})</span>'
+                    f'<span class="mute" style="margin-left:8px">{ind["last_date"]}</span>')
+        html.append(metric_card('收盤價', f'{ind["last_close"]:.2f}',
+                                _ind_cls(ind['chg']), sub=chg_html))
+        # 資產規模
+        if aum is not None:
+            html.append(metric_card('資產規模', f'{aum:.2f}B',
+                                    'neg' if aum < 1.0 else ('warn' if aum < 5.0 else 'pos'),
+                                    sub=f'{snap_date or "&lt;NA&gt;"} 資料'))
+        # 布林位階
+        if ind.get('bb_pos') is not None:
+            bb_cls = ('neg' if ind['bb_label'] == '極高' else
+                      'warn' if ind['bb_label'] == '偏高' else
+                      'pos' if ind['bb_label'] == '極低' else '')
+            html.append(metric_card('布林位階',
+                                    f'{ind["bb_pos"]*100:.0f}%',
+                                    bb_cls, emoji='📏',
+                                    sub=ind['bb_label']))
+        # BIAS20
+        bias = ind.get('bias20')
+        if bias is not None:
+            bias_label = '超買警戒' if bias > 8 else '偏高' if bias > 3 else '中性' if abs(bias) <= 3 else '偏低' if bias > -8 else '超賣警戒'
+            html.append(metric_card('BIAS20 (月線乖離)',
+                                    f'{bias:+.2f}%',
+                                    _ind_cls(bias, 3, -3),
+                                    sub=bias_label))
+        # RSI(14)
+        rsi = ind.get('rsi')
+        if rsi is not None:
+            rsi_cls = ('neg' if ind['rsi_label'] == '超買區' else
+                       'pos' if ind['rsi_label'] == '超賣區' else
+                       'warn' if '偏' in ind['rsi_label'] else '')
+            html.append(metric_card('RSI(14)', f'{rsi:.1f}', rsi_cls, sub=ind['rsi_label']))
+        # MACD 柱
+        osc = ind.get('osc')
+        if osc is not None:
+            macd_cls = 'pos' if osc > 0 else 'neg'
+            html.append(metric_card('MACD 柱',
+                                    f'{osc:+.3f}',
+                                    macd_cls, sub=ind['macd_label']))
+        # 成交額
+        amt = ind.get('amount_5d_avg')
+        if amt:
+            html.append(metric_card('5 日均成交額',
+                                    f'{amt/1e8:.2f} 億',
+                                    sub='close × volume 估算'))
+    else:
+        # 沒指標 fallback 顯示既有 fund_snapshot
+        html.append(metric_card('NAV', fmt_num(nav)))
+        html.append(metric_card('基金規模 (B)', fmt_num(aum)))
+        html.append(metric_card('受益權單位', fmt_num(units)))
+    html.append(metric_card('持股數', str(hn) if hn is not None else NA, sub=f'快照 {snap_date or "&lt;NA&gt;"}'))
+    html.append('</div>')
+
+    html.append('<h2>📈 技術線型（最近 2 年日線）</h2>')
     html.append(render_chart(etf_id))
 
     html.append(f'<h2>② 最新持股（{snap_date or "&lt;NA&gt;"}）</h2>')

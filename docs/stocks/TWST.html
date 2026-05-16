@@ -23,9 +23,42 @@ tr:hover td{background:#1c2128}
 a{color:#58a6ff;text-decoration:none}
 a:hover{text-decoration:underline}
 .tag{display:inline-block;padding:2px 6px;border-radius:3px;background:#21262d;font-size:11px;margin-right:4px}
-.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}
-.metric{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:10px;font-size:12px}
-.metric .v{font-size:18px;font-weight:600;color:#58a6ff;display:block;margin-top:2px}
+
+/* ---- 大型 metric cards (新版) ---- */
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:14px 0}
+.metric{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px 16px;font-size:12px;position:relative}
+.metric .label{color:#8b949e;font-size:12px;display:flex;align-items:center;gap:6px}
+.metric .v{font-size:26px;font-weight:700;color:#58a6ff;display:block;margin-top:6px;line-height:1.1;font-variant-numeric:tabular-nums}
+.metric.pos .v{color:#3fb950}.metric.neg .v{color:#f85149}.metric.warn .v{color:#d29922}.metric.info .v{color:#a371f7}
+.metric.lg .v{font-size:30px}
+.metric .sub{color:#6e7681;font-size:11px;margin-top:4px}
+
+/* ---- action pill (加碼 / 減碼 / 新增 / 出清) ---- */
+.pill{display:inline-block;padding:2px 9px;border-radius:4px;font-size:11px;font-weight:600;border:1px solid transparent}
+.pill-add{background:rgba(63,185,80,.15);color:#3fb950;border-color:rgba(63,185,80,.3)}
+.pill-cut{background:rgba(248,81,73,.15);color:#f85149;border-color:rgba(248,81,73,.3)}
+.pill-up{background:rgba(63,185,80,.15);color:#3fb950;border-color:rgba(63,185,80,.3)}
+.pill-down{background:rgba(210,153,34,.15);color:#d29922;border-color:rgba(210,153,34,.3)}
+.pill-new{background:rgba(31,111,235,.15);color:#58a6ff;border-color:rgba(31,111,235,.3)}
+.pill-flat{background:rgba(110,118,129,.15);color:#8b949e;border-color:rgba(110,118,129,.3)}
+
+/* ---- bar 進度條 (table cell 內) ---- */
+.bar{display:inline-block;height:6px;background:#1f6feb;border-radius:3px;vertical-align:middle;min-width:1px}
+.bar-cell{display:flex;align-items:center;gap:6px;justify-content:flex-start}
+.bar-cell .bar{flex:0 0 auto}
+
+/* ---- sparkline (近 N 日趨勢迷你 bar) ---- */
+.sparkline{display:inline-flex;align-items:flex-end;gap:1px;height:18px;min-width:30px}
+.sparkline span{width:3px;background:#30363d;border-radius:1px 1px 0 0}
+.sparkline span.up{background:#3fb950}.sparkline span.down{background:#f85149}
+
+/* ---- filter tabs ---- */
+.filter-tabs{display:inline-flex;gap:6px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:4px;margin:10px 0;flex-wrap:wrap}
+.filter-tabs button{background:transparent;color:#8b949e;border:none;padding:6px 14px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit}
+.filter-tabs button:hover{color:#c9d1d9}
+.filter-tabs button.cur{background:#1f6feb;color:#fff}
+
+/* ---- 已存在 ---- */
 .banner{background:#1c2128;border:1px solid #30363d;border-left:3px solid #d29922;border-radius:6px;padding:10px 14px;margin:12px 0;font-size:13px;color:#c9d1d9}
 .toggle{display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:4px;margin-bottom:12px}
 .toggle a{display:inline-block;padding:5px 12px;border-radius:4px;font-size:13px}
@@ -84,8 +117,29 @@ document.addEventListener('DOMContentLoaded',()=>{
   });
 })();
 </script>
+<script>
+function setupFilterTabs(tabsId, tableId) {
+  var tabs = document.getElementById(tabsId);
+  var table = document.getElementById(tableId);
+  if (!tabs || !table) return;
+  tabs.querySelectorAll('button').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      tabs.querySelectorAll('button').forEach(function(b){b.classList.remove('cur');});
+      btn.classList.add('cur');
+      var f = btn.getAttribute('data-filter');
+      table.querySelectorAll('tbody tr').forEach(function(tr) {
+        if (f === 'all' || tr.getAttribute('data-action') === f) {
+          tr.style.display = '';
+        } else {
+          tr.style.display = 'none';
+        }
+      });
+    });
+  });
+}
+</script>
 </head><body>
-<nav><span class="nav-links"><a href="../index.html" class="">總覽</a> <a href="../daily.html" class="">每日快照</a> <a href="../changes.html" class="">持股異動</a> <a href="../overlap.html" class="">持股重疊</a> <a href="../momentum.html" class="">同步加碼</a> <a href="../radar.html" class="">新增/賣出雷達</a></span><span class="freshness" data-build-utc="2026-05-16T14:10:03+00:00">●</span></nav>
+<nav><span class="nav-links"><a href="../index.html" class="">總覽</a> <a href="../daily.html" class="">每日快照</a> <a href="../changes.html" class="">持股異動</a> <a href="../overlap.html" class="">持股重疊</a> <a href="../momentum.html" class="">同步加碼</a> <a href="../radar.html" class="">新增/賣出雷達</a></span><span class="freshness" data-build-utc="2026-05-16T16:13:09+00:00">●</span></nav>
 <h1>TWST Twist Bioscience Corp — 技術分析 + ETF 持有狀況</h1>
 
 <h2>📈 技術分析（最近 2 年日線）</h2>
@@ -107,14 +161,17 @@ document.addEventListener('DOMContentLoaded',()=>{
   }, 100);
 })();
 </script>
-<h2>最新持有 ETF（2026-05-16）</h2>
+<h2>最新持有 ETF（2026-05-17）</h2>
 <table class="sortable"><thead><tr><th>ETF</th><th>名稱</th><th>股數</th><th>權重 %</th></tr></thead><tbody>
 <tr><td><a href="../etfs/00983A.html">00983A</a></td><td>主動中信ARK創新</td><td>36,271</td><td>2.32%</td></tr>
 </tbody></table>
 <h2>持有規模時序</h2>
-<div class="banner">需累積至少 2 天才有時序資料。目前 1 天。</div>
-<div class="foot">資料最新日期 2026-05-16　·
-頁面生成 2026-05-16 14:10 UTC　·
+<table><thead><tr><th>日期</th><th>合計被持有股數</th></tr></thead><tbody>
+<tr><td>2026-05-16</td><td>36,271</td></tr>
+<tr><td>2026-05-17</td><td>36,271</td></tr>
+</tbody></table>
+<div class="foot">資料最新日期 2026-05-17　·
+頁面生成 2026-05-16 16:13 UTC　·
 <a href="https://github.com/Simon99/active-etf-tracker">原始碼</a>　·
 <a href="https://github.com/Simon99/active-etf-tracker/actions">Actions 歷史</a></div>
 </body></html>
