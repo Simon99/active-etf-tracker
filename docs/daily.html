@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>每日快照 — 2026-05-16</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","SF Pro Text",sans-serif;background:#0d1117;color:#e6edf3;line-height:1.55;padding:20px;max-width:1500px;margin:0 auto}
+h1{font-size:24px;font-weight:600;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:16px}
+h2{font-size:18px;margin:28px 0 12px;color:#58a6ff;border-left:3px solid #58a6ff;padding-left:10px}
+h3{font-size:15px;margin:18px 0 8px;color:#c9d1d9}
+nav{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:13px}
+nav a{color:#58a6ff;margin-right:14px;text-decoration:none}
+nav a:hover{text-decoration:underline}
+nav a.cur{color:#fff;font-weight:600}
+table{border-collapse:collapse;font-size:12px;margin:8px 0;background:#161b22;width:100%}
+th{background:#21262d;color:#c9d1d9;padding:6px 8px;text-align:right;border:1px solid #30363d;cursor:pointer;user-select:none;font-weight:600;position:sticky;top:0}
+th:first-child,td:first-child{text-align:left}
+th:hover{background:#2d333b}
+td{padding:5px 8px;border:1px solid #30363d;text-align:right;font-variant-numeric:tabular-nums}
+tr:hover td{background:#1c2128}
+.pos{color:#3fb950}.neg{color:#f85149}.mute{color:#6e7681}
+.na{color:#6e7681;font-family:monospace}
+a{color:#58a6ff;text-decoration:none}
+a:hover{text-decoration:underline}
+.tag{display:inline-block;padding:2px 6px;border-radius:3px;background:#21262d;font-size:11px;margin-right:4px}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}
+.metric{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:10px;font-size:12px}
+.metric .v{font-size:18px;font-weight:600;color:#58a6ff;display:block;margin-top:2px}
+.banner{background:#1c2128;border:1px solid #30363d;border-left:3px solid #d29922;border-radius:6px;padding:10px 14px;margin:12px 0;font-size:13px;color:#c9d1d9}
+.toggle{display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:4px;margin-bottom:12px}
+.toggle a{display:inline-block;padding:5px 12px;border-radius:4px;font-size:13px}
+.toggle a.cur{background:#1f6feb;color:#fff}
+.foot{margin-top:32px;padding-top:12px;border-top:1px solid #30363d;color:#6e7681;font-size:11px}
+</style>
+<script>
+function sortTable(table,col,asc){
+  const rows=Array.from(table.querySelectorAll('tbody tr'));
+  rows.sort((a,b)=>{
+    let av=a.cells[col].getAttribute('data-sort')||a.cells[col].textContent;
+    let bv=b.cells[col].getAttribute('data-sort')||b.cells[col].textContent;
+    const an=parseFloat(av),bn=parseFloat(bv);
+    if(!isNaN(an)&&!isNaN(bn))return asc?an-bn:bn-an;
+    return asc?av.localeCompare(bv):bv.localeCompare(av);
+  });
+  const tb=table.querySelector('tbody');rows.forEach(r=>tb.appendChild(r));
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('table.sortable').forEach(t=>{
+    t.querySelectorAll('th').forEach((th,i)=>{
+      let asc=true;
+      th.addEventListener('click',()=>{sortTable(t,i,asc);asc=!asc;});
+    });
+  });
+});
+</script>
+</head><body>
+<nav><a href="index.html" class="">總覽</a> <a href="daily.html" class="cur">每日快照</a> <a href="changes.html" class="">持股異動</a> <a href="overlap.html" class="">持股重疊</a> <a href="momentum.html" class="">同步加碼</a> <a href="radar.html" class="">新增/賣出雷達</a></nav>
+<h1>每日快照 — 2026-05-16</h1>
+
+<div class="banner">共 10 檔 ETF / 490 持股 row。點 ETF 代碼看技術圖；點個股看反向追蹤。</div>
+<table class="sortable"><thead><tr><th>ETF</th><th>名稱</th><th>個股</th><th>個股名</th><th>股數</th><th>權重 %</th></tr></thead><tbody>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2330.html">2330</a></td><td>台積電</td><td data-sort="12440000">12,440,000</td><td data-sort="18.02">18.02%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2303.html">2303</a></td><td>聯電</td><td data-sort="59660000">59,660,000</td><td data-sort="4.2">4.20%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/3017.html">3017</a></td><td>奇鋐</td><td data-sort="2660000">2,660,000</td><td data-sort="4.18">4.18%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/3037.html">3037</a></td><td>欣興</td><td data-sort="7250000">7,250,000</td><td data-sort="3.81">3.81%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2383.html">2383</a></td><td>台光電</td><td data-sort="1244000">1,244,000</td><td data-sort="3.67">3.67%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/3711.html">3711</a></td><td>日月光投控</td><td data-sort="8920000">8,920,000</td><td data-sort="3.12">3.12%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2368.html">2368</a></td><td>金像電</td><td data-sort="3770000">3,770,000</td><td data-sort="3.11">3.11%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2308.html">2308</a></td><td>台達電</td><td data-sort="1823000">1,823,000</td><td data-sort="2.42">2.42%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2345.html">2345</a></td><td>智邦</td><td data-sort="1500000">1,500,000</td><td data-sort="2.4">2.40%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/6669.html">6669</a></td><td>緯穎</td><td data-sort="610000">610,000</td><td data-sort="2.0">2.00%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/8299.html">8299</a></td><td>群聯</td><td data-sort="1128000">1,128,000</td><td data-sort="1.91">1.91%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2344.html">2344</a></td><td>華邦電</td><td data-sort="22000000">22,000,000</td><td data-sort="1.82">1.82%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/6223.html">6223</a></td><td>旺矽</td><td data-sort="460000">460,000</td><td data-sort="1.73">1.73%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/5274.html">5274</a></td><td>信驊</td><td data-sort="150000">150,000</td><td data-sort="1.65">1.65%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2327.html">2327</a></td><td>國巨*</td><td data-sort="5580000">5,580,000</td><td data-sort="1.63">1.63%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/3665.html">3665</a></td><td>貿聯-KY</td><td data-sort="1160000">1,160,000</td><td data-sort="1.55">1.55%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2337.html">2337</a></td><td>旺宏</td><td data-sort="13832000">13,832,000</td><td data-sort="1.44">1.44%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/8046.html">8046</a></td><td>南電</td><td data-sort="2590000">2,590,000</td><td data-sort="1.3">1.30%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/5347.html">5347</a></td><td>世界</td><td data-sort="9901000">9,901,000</td><td data-sort="1.12">1.12%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/4958.html">4958</a></td><td>臻鼎-KY</td><td data-sort="3950000">3,950,000</td><td data-sort="1.01">1.01%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/3653.html">3653</a></td><td>健策</td><td data-sort="430000">430,000</td><td data-sort="0.95">0.95%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/3533.html">3533</a></td><td>嘉澤</td><td data-sort="605000">605,000</td><td data-sort="0.9">0.90%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2882.html">2882</a></td><td>國泰金</td><td data-sort="16001000">16,001,000</td><td data-sort="0.8">0.80%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2360.html">2360</a></td><td>致茂</td><td data-sort="529000">529,000</td><td data-sort="0.76">0.76%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/6515.html">6515</a></td><td>穎崴</td><td data-sort="120000">120,000</td><td data-sort="0.75">0.75%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/7769.html">7769</a></td><td>鴻勁</td><td data-sort="166000">166,000</td><td data-sort="0.73">0.73%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/3529.html">3529</a></td><td>力旺</td><td data-sort="255000">255,000</td><td data-sort="0.62">0.62%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/8996.html">8996</a></td><td>高力</td><td data-sort="928000">928,000</td><td data-sort="0.62">0.62%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/3044.html">3044</a></td><td>健鼎</td><td data-sort="1894000">1,894,000</td><td data-sort="0.58">0.58%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/8210.html">8210</a></td><td>勤誠</td><td data-sort="553000">553,000</td><td data-sort="0.5">0.50%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/3583.html">3583</a></td><td>辛耘</td><td data-sort="820000">820,000</td><td data-sort="0.47">0.47%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2313.html">2313</a></td><td>華通</td><td data-sort="3031000">3,031,000</td><td data-sort="0.46">0.46%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/6274.html">6274</a></td><td>台燿</td><td data-sort="551000">551,000</td><td data-sort="0.46">0.46%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/3443.html">3443</a></td><td>創意</td><td data-sort="145000">145,000</td><td data-sort="0.45">0.45%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/3081.html">3081</a></td><td>聯亞</td><td data-sort="255000">255,000</td><td data-sort="0.43">0.43%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/8358.html">8358</a></td><td>金居</td><td data-sort="1700000">1,700,000</td><td data-sort="0.42">0.42%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2891.html">2891</a></td><td>中信金</td><td data-sort="11801000">11,801,000</td><td data-sort="0.41">0.41%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/3036.html">3036</a></td><td>文曄</td><td data-sort="2365000">2,365,000</td><td data-sort="0.41">0.41%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/6147.html">6147</a></td><td>頎邦</td><td data-sort="3100000">3,100,000</td><td data-sort="0.41">0.41%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/4966.html">4966</a></td><td>譜瑞-KY</td><td data-sort="784000">784,000</td><td data-sort="0.4">0.40%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/3211.html">3211</a></td><td>順達</td><td data-sort="1601000">1,601,000</td><td data-sort="0.37">0.37%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/1560.html">1560</a></td><td>中砂</td><td data-sort="851000">851,000</td><td data-sort="0.35">0.35%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2454.html">2454</a></td><td>聯發科</td><td data-sort="155000">155,000</td><td data-sort="0.32">0.32%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/6442.html">6442</a></td><td>光聖</td><td data-sort="280000">280,000</td><td data-sort="0.31">0.31%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/4979.html">4979</a></td><td>華星光</td><td data-sort="860000">860,000</td><td data-sort="0.29">0.29%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/3105.html">3105</a></td><td>穩懋</td><td data-sort="957000">957,000</td><td data-sort="0.28">0.28%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/6805.html">6805</a></td><td>富世達</td><td data-sort="215000">215,000</td><td data-sort="0.24">0.24%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2481.html">2481</a></td><td>強茂</td><td data-sort="2510000">2,510,000</td><td data-sort="0.19">0.19%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2049.html">2049</a></td><td>上銀</td><td data-sort="601000">601,000</td><td data-sort="0.15">0.15%</td></tr>
+<tr><td><a href="etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td><a href="stocks/2455.html">2455</a></td><td>全新</td><td data-sort="145000">145,000</td><td data-sort="0.03">0.03%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2330.html">2330</a></td><td>台灣積體電路製造</td><td data-sort="607000">607,000</td><td data-sort="7.97">7.97%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2308.html">2308</a></td><td>台達電子工業</td><td data-sort="459000">459,000</td><td data-sort="5.52">5.52%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2383.html">2383</a></td><td>台光電子材料</td><td data-sort="134000">134,000</td><td data-sort="3.59">3.59%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2454.html">2454</a></td><td>聯發科技</td><td data-sort="188000">188,000</td><td data-sort="3.55">3.55%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/7769.html">7769</a></td><td>鴻勁精密</td><td data-sort="86000">86,000</td><td data-sort="3.44">3.44%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2345.html">2345</a></td><td>智邦科技</td><td data-sort="227000">227,000</td><td data-sort="3.3">3.30%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2360.html">2360</a></td><td>致茂電子</td><td data-sort="248000">248,000</td><td data-sort="3.22">3.22%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2317.html">2317</a></td><td>鴻海精密工業</td><td data-sort="2076000">2,076,000</td><td data-sort="2.99">2.99%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2408.html">2408</a></td><td>南亞科技</td><td data-sort="1646000">1,646,000</td><td data-sort="2.97">2.97%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2382.html">2382</a></td><td>廣達電腦</td><td data-sort="1574000">1,574,000</td><td data-sort="2.79">2.79%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/3017.html">3017</a></td><td>奇鋐科技</td><td data-sort="184000">184,000</td><td data-sort="2.62">2.62%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/5274.html">5274</a></td><td>信驊科技</td><td data-sort="25000">25,000</td><td data-sort="2.49">2.49%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/6669.html">6669</a></td><td>緯穎科技服務</td><td data-sort="83000">83,000</td><td data-sort="2.46">2.46%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/6223.html">6223</a></td><td>旺矽科技</td><td data-sort="71000">71,000</td><td data-sort="2.43">2.43%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/8210.html">8210</a></td><td>勤誠興業</td><td data-sort="292000">292,000</td><td data-sort="2.39">2.39%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2344.html">2344</a></td><td>華邦電子</td><td data-sort="3152000">3,152,000</td><td data-sort="2.37">2.37%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2059.html">2059</a></td><td>川湖科技</td><td data-sort="82000">82,000</td><td data-sort="2.31">2.31%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/8299.html">8299</a></td><td>群聯電子</td><td data-sort="150000">150,000</td><td data-sort="2.3">2.30%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2368.html">2368</a></td><td>金像電子（股）公司</td><td data-sort="299000">299,000</td><td data-sort="2.24">2.24%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/6515.html">6515</a></td><td>穎崴科技</td><td data-sort="37000">37,000</td><td data-sort="2.1">2.10%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/3711.html">3711</a></td><td>日月光投資控股</td><td data-sort="584000">584,000</td><td data-sort="1.85">1.85%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/6274.html">6274</a></td><td>台燿科技</td><td data-sort="222000">222,000</td><td data-sort="1.68">1.68%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/6805.html">6805</a></td><td>富世達</td><td data-sort="161000">161,000</td><td data-sort="1.62">1.62%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/3665.html">3665</a></td><td>貿聯控股（BizLink Holding In</td><td data-sort="130336">130,336</td><td data-sort="1.58">1.58%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/3443.html">3443</a></td><td>創意電子</td><td data-sort="54000">54,000</td><td data-sort="1.52">1.52%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/3653.html">3653</a></td><td>健策精密工業</td><td data-sort="66000">66,000</td><td data-sort="1.33">1.33%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/8996.html">8996</a></td><td>高力熱處理工業</td><td data-sort="221000">221,000</td><td data-sort="1.33">1.33%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/3036.html">3036</a></td><td>文曄科技</td><td data-sort="755000">755,000</td><td data-sort="1.18">1.18%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/3037.html">3037</a></td><td>欣興電子</td><td data-sort="240000">240,000</td><td data-sort="1.14">1.14%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/3081.html">3081</a></td><td>聯亞光電工業</td><td data-sort="71000">71,000</td><td data-sort="1.09">1.09%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/6584.html">6584</a></td><td>南俊國際</td><td data-sort="283000">283,000</td><td data-sort="1.08">1.08%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/3231.html">3231</a></td><td>緯創資通</td><td data-sort="1228000">1,228,000</td><td data-sort="0.96">0.96%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/6831.html">6831</a></td><td>邁科科技</td><td data-sort="224000">224,000</td><td data-sort="0.94">0.94%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2891.html">2891</a></td><td>中國信託金融控股</td><td data-sort="2849000">2,849,000</td><td data-sort="0.91">0.91%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/3189.html">3189</a></td><td>景碩科技</td><td data-sort="305000">305,000</td><td data-sort="0.86">0.86%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/3533.html">3533</a></td><td>嘉澤端子工業</td><td data-sort="59000">59,000</td><td data-sort="0.8">0.80%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/3044.html">3044</a></td><td>健鼎科技</td><td data-sort="276000">276,000</td><td data-sort="0.76">0.76%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/6442.html">6442</a></td><td>光紅建聖</td><td data-sort="71000">71,000</td><td data-sort="0.72">0.72%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/3293.html">3293</a></td><td>鈊象電子</td><td data-sort="141000">141,000</td><td data-sort="0.59">0.59%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/1477.html">1477</a></td><td>聚陽實業</td><td data-sort="402000">402,000</td><td data-sort="0.51">0.51%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2376.html">2376</a></td><td>技嘉科技</td><td data-sort="245000">245,000</td><td data-sort="0.46">0.46%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2548.html">2548</a></td><td>華固建設</td><td data-sort="512000">512,000</td><td data-sort="0.38">0.38%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/1519.html">1519</a></td><td>華城電機</td><td data-sort="78000">78,000</td><td data-sort="0.37">0.37%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/2884.html">2884</a></td><td>玉山金融控股</td><td data-sort="1999622">1,999,622</td><td data-sort="0.37">0.37%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/5904.html">5904</a></td><td>寶雅國際</td><td data-sort="100450">100,450</td><td data-sort="0.32">0.32%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/4915.html">4915</a></td><td>致伸科技</td><td data-sort="596000">596,000</td><td data-sort="0.25">0.25%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/3264.html">3264</a></td><td>欣銓科技</td><td data-sort="172000">172,000</td><td data-sort="0.23">0.23%</td></tr>
+<tr><td><a href="etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td><a href="stocks/5434.html">5434</a></td><td>崇越科技</td><td data-sort="59000">59,000</td><td data-sort="0.14">0.14%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2330.html">2330</a></td><td>台積電</td><td data-sort="11657000">11,657,000</td><td data-sort="10.26">10.26%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2383.html">2383</a></td><td>台光電</td><td data-sort="4723000">4,723,000</td><td data-sort="8.47">8.47%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2345.html">2345</a></td><td>智邦</td><td data-sort="6231000">6,231,000</td><td data-sort="6.07">6.07%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2454.html">2454</a></td><td>聯發科</td><td data-sort="4263000">4,263,000</td><td data-sort="5.4">5.40%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2308.html">2308</a></td><td>台達電</td><td data-sort="6572000">6,572,000</td><td data-sort="5.3">5.30%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/6223.html">6223</a></td><td>旺矽</td><td data-sort="2169000">2,169,000</td><td data-sort="4.97">4.97%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/3017.html">3017</a></td><td>奇鋐</td><td data-sort="4925000">4,925,000</td><td data-sort="4.7">4.70%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/6669.html">6669</a></td><td>緯穎</td><td data-sort="2294000">2,294,000</td><td data-sort="4.56">4.56%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/8046.html">8046</a></td><td>南電</td><td data-sort="12658000">12,658,000</td><td data-sort="3.87">3.87%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/3665.html">3665</a></td><td>貿聯-KY</td><td data-sort="4703848">4,703,848</td><td data-sort="3.83">3.83%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2368.html">2368</a></td><td>金像電</td><td data-sort="7018000">7,018,000</td><td data-sort="3.52">3.52%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/3037.html">3037</a></td><td>欣興</td><td data-sort="10822000">10,822,000</td><td data-sort="3.45">3.45%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2327.html">2327</a></td><td>國巨*</td><td data-sort="18313000">18,313,000</td><td data-sort="3.24">3.24%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/5274.html">5274</a></td><td>信驊</td><td data-sort="483000">483,000</td><td data-sort="3.23">3.23%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/3711.html">3711</a></td><td>日月光投控</td><td data-sort="14998000">14,998,000</td><td data-sort="3.19">3.19%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/3653.html">3653</a></td><td>健策</td><td data-sort="2267000">2,267,000</td><td data-sort="3.05">3.05%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2303.html">2303</a></td><td>聯電</td><td data-sort="56167000">56,167,000</td><td data-sort="2.4">2.40%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/6274.html">6274</a></td><td>台燿</td><td data-sort="4151000">4,151,000</td><td data-sort="2.11">2.11%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/6515.html">6515</a></td><td>穎崴</td><td data-sort="442000">442,000</td><td data-sort="1.68">1.68%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2449.html">2449</a></td><td>京元電子</td><td data-sort="12919000">12,919,000</td><td data-sort="1.5">1.50%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/6510.html">6510</a></td><td>精測</td><td data-sort="930000">930,000</td><td data-sort="1.35">1.35%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/6805.html">6805</a></td><td>富世達</td><td data-sort="1761000">1,761,000</td><td data-sort="1.19">1.19%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/8210.html">8210</a></td><td>勤誠</td><td data-sort="1967000">1,967,000</td><td data-sort="1.08">1.08%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/3264.html">3264</a></td><td>欣銓</td><td data-sort="9030000">9,030,000</td><td data-sort="0.79">0.79%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2404.html">2404</a></td><td>漢唐</td><td data-sort="1394000">1,394,000</td><td data-sort="0.54">0.54%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/5439.html">5439</a></td><td>高技</td><td data-sort="3528000">3,528,000</td><td data-sort="0.54">0.54%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/6187.html">6187</a></td><td>萬潤</td><td data-sort="1224000">1,224,000</td><td data-sort="0.54">0.54%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/3008.html">3008</a></td><td>大立光</td><td data-sort="329000">329,000</td><td data-sort="0.44">0.44%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2357.html">2357</a></td><td>華碩</td><td data-sort="1703000">1,703,000</td><td data-sort="0.42">0.42%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/8996.html">8996</a></td><td>高力</td><td data-sort="1034000">1,034,000</td><td data-sort="0.42">0.42%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2313.html">2313</a></td><td>華通</td><td data-sort="4124000">4,124,000</td><td data-sort="0.38">0.38%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/8150.html">8150</a></td><td>南茂</td><td data-sort="11334000">11,334,000</td><td data-sort="0.36">0.36%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/4966.html">4966</a></td><td>譜瑞-KY</td><td data-sort="1036000">1,036,000</td><td data-sort="0.32">0.32%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/1590.html">1590</a></td><td>亞德客-KY</td><td data-sort="530000">530,000</td><td data-sort="0.3">0.30%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/8358.html">8358</a></td><td>金居</td><td data-sort="1980000">1,980,000</td><td data-sort="0.3">0.30%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/6278.html">6278</a></td><td>台表科</td><td data-sort="2500000">2,500,000</td><td data-sort="0.21">0.21%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/3443.html">3443</a></td><td>創意</td><td data-sort="107000">107,000</td><td data-sort="0.2">0.20%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2481.html">2481</a></td><td>強茂</td><td data-sort="3654000">3,654,000</td><td data-sort="0.17">0.17%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/6415.html">6415</a></td><td>矽力*-KY</td><td data-sort="940000">940,000</td><td data-sort="0.17">0.17%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/6191.html">6191</a></td><td>精成科</td><td data-sort="3988000">3,988,000</td><td data-sort="0.14">0.14%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/3036.html">3036</a></td><td>文曄</td><td data-sort="1200000">1,200,000</td><td data-sort="0.13">0.13%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/3376.html">3376</a></td><td>新日興</td><td data-sort="1741000">1,741,000</td><td data-sort="0.13">0.13%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/3217.html">3217</a></td><td>優群</td><td data-sort="874000">874,000</td><td data-sort="0.06">0.06%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2002.html">2002</a></td><td>中鋼</td><td data-sort="5163000">5,163,000</td><td data-sort="0.04">0.04%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/1319.html">1319</a></td><td>東陽</td><td data-sort="511000">511,000</td><td data-sort="0.02">0.02%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/1815.html">1815</a></td><td>富喬</td><td data-sort="107000">107,000</td><td data-sort="0">0.00%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2317.html">2317</a></td><td>鴻海</td><td data-sort="1000">1,000</td><td data-sort="0">0.00%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/2439.html">2439</a></td><td>美律</td><td data-sort="18000">18,000</td><td data-sort="0">0.00%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/3661.html">3661</a></td><td>世芯-KY</td><td data-sort="1000">1,000</td><td data-sort="0">0.00%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/5347.html">5347</a></td><td>世界</td><td data-sort="1000">1,000</td><td data-sort="0">0.00%</td></tr>
+<tr><td><a href="etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td><a href="stocks/6147.html">6147</a></td><td>頎邦</td><td data-sort="1000">1,000</td><td data-sort="0">0.00%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2330.html">2330</a></td><td>台積電</td><td data-sort="1860000">1,860,000</td><td data-sort="8.4074">8.41%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/5536.html">5536</a></td><td>聖暉*</td><td data-sort="3602000">3,602,000</td><td data-sort="7.3679">7.37%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/6669.html">6669</a></td><td>緯穎</td><td data-sort="513000">513,000</td><td data-sort="5.2365">5.24%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2383.html">2383</a></td><td>台光電</td><td data-sort="548000">548,000</td><td data-sort="5.047">5.05%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2345.html">2345</a></td><td>智邦</td><td data-sort="849000">849,000</td><td data-sort="4.2442">4.24%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/3264.html">3264</a></td><td>欣銓</td><td data-sort="9012000">9,012,000</td><td data-sort="4.0645">4.06%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2360.html">2360</a></td><td>致茂</td><td data-sort="851000">851,000</td><td data-sort="3.8041">3.80%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/3105.html">3105</a></td><td>穩懋</td><td data-sort="4118000">4,118,000</td><td data-sort="3.7679">3.77%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/6223.html">6223</a></td><td>旺矽</td><td data-sort="318000">318,000</td><td data-sort="3.741">3.74%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2454.html">2454</a></td><td>聯發科</td><td data-sort="573000">573,000</td><td data-sort="3.7278">3.73%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2308.html">2308</a></td><td>台達電</td><td data-sort="822000">822,000</td><td data-sort="3.4038">3.40%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/3491.html">3491</a></td><td>昇達科</td><td data-sort="980000">980,000</td><td data-sort="3.3051">3.31%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/6139.html">6139</a></td><td>亞翔</td><td data-sort="2357000">2,357,000</td><td data-sort="3.2596">3.26%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/6257.html">6257</a></td><td>矽格</td><td data-sort="7451000">7,451,000</td><td data-sort="3.2266">3.23%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/6147.html">6147</a></td><td>頎邦</td><td data-sort="5888000">5,888,000</td><td data-sort="2.4088">2.41%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2059.html">2059</a></td><td>川湖</td><td data-sort="246000">246,000</td><td data-sort="2.3859">2.39%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/4958.html">4958</a></td><td>臻鼎-KY</td><td data-sort="2770000">2,770,000</td><td data-sort="2.2166">2.22%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/6285.html">6285</a></td><td>啟碁</td><td data-sort="4160000">4,160,000</td><td data-sort="2.1584">2.16%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/3017.html">3017</a></td><td>奇鋐</td><td data-sort="389000">389,000</td><td data-sort="1.9058">1.91%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/3583.html">3583</a></td><td>辛耘</td><td data-sort="1068000">1,068,000</td><td data-sort="1.8926">1.89%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/6488.html">6488</a></td><td>環球晶</td><td data-sort="1285000">1,285,000</td><td data-sort="1.8207">1.82%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2303.html">2303</a></td><td>聯電</td><td data-sort="8257000">8,257,000</td><td data-sort="1.8125">1.81%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/1785.html">1785</a></td><td>光洋科</td><td data-sort="5477000">5,477,000</td><td data-sort="1.6723">1.67%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2467.html">2467</a></td><td>志聖</td><td data-sort="1413000">1,413,000</td><td data-sort="1.6552">1.66%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2472.html">2472</a></td><td>立隆電</td><td data-sort="3193000">3,193,000</td><td data-sort="1.3827">1.38%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/5289.html">5289</a></td><td>宜鼎</td><td data-sort="305000">305,000</td><td data-sort="1.0712">1.07%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/3030.html">3030</a></td><td>德律</td><td data-sort="1272000">1,272,000</td><td data-sort="1.0026">1.00%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/3711.html">3711</a></td><td>日月光投控</td><td data-sort="911000">911,000</td><td data-sort="0.9944">0.99%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/3533.html">3533</a></td><td>嘉澤</td><td data-sort="209000">209,000</td><td data-sort="0.9718">0.97%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/6510.html">6510</a></td><td>精測</td><td data-sort="126000">126,000</td><td data-sort="0.9391">0.94%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/6274.html">6274</a></td><td>台燿</td><td data-sort="315000">315,000</td><td data-sort="0.8203">0.82%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/8996.html">8996</a></td><td>高力</td><td data-sort="389000">389,000</td><td data-sort="0.8073">0.81%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2404.html">2404</a></td><td>漢唐</td><td data-sort="384000">384,000</td><td data-sort="0.7663">0.77%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2347.html">2347</a></td><td>聯強</td><td data-sort="4410000">4,410,000</td><td data-sort="0.7251">0.73%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/3211.html">3211</a></td><td>順達</td><td data-sort="918000">918,000</td><td data-sort="0.6586">0.66%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2313.html">2313</a></td><td>華通</td><td data-sort="1234000">1,234,000</td><td data-sort="0.5799">0.58%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2368.html">2368</a></td><td>金像電</td><td data-sort="187000">187,000</td><td data-sort="0.4814">0.48%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/3665.html">3665</a></td><td>貿聯-KY</td><td data-sort="60136">60,136</td><td data-sort="0.2514">0.25%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/3131.html">3131</a></td><td>弘塑</td><td data-sort="43000">43,000</td><td data-sort="0.2462">0.25%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/5274.html">5274</a></td><td>信驊</td><td data-sort="6000">6,000</td><td data-sort="0.2058">0.21%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/4938.html">4938</a></td><td>和碩</td><td data-sort="1345000">1,345,000</td><td data-sort="0.2053">0.21%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/6177.html">6177</a></td><td>達麗</td><td data-sort="1862350">1,862,350</td><td data-sort="0.1694">0.17%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/8046.html">8046</a></td><td>南電</td><td data-sort="107000">107,000</td><td data-sort="0.1678">0.17%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/3376.html">3376</a></td><td>新日興</td><td data-sort="371000">371,000</td><td data-sort="0.1425">0.14%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2885.html">2885</a></td><td>元大金</td><td data-sort="1150420">1,150,420</td><td data-sort="0.1258">0.13%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/8464.html">8464</a></td><td>億豐</td><td data-sort="148000">148,000</td><td data-sort="0.093">0.09%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/1319.html">1319</a></td><td>東陽</td><td data-sort="355000">355,000</td><td data-sort="0.0556">0.06%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/4441.html">4441</a></td><td>振大環球</td><td data-sort="62000">62,000</td><td data-sort="0.0254">0.03%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/3443.html">3443</a></td><td>創意</td><td data-sort="1000">1,000</td><td data-sort="0.0096">0.01%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/6805.html">6805</a></td><td>富世達</td><td data-sort="1000">1,000</td><td data-sort="0.0034">0.00%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/1519.html">1519</a></td><td>華城</td><td data-sort="600">600</td><td data-sort="0.0009">0.00%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2327.html">2327</a></td><td>國巨*</td><td data-sort="1000">1,000</td><td data-sort="0.0009">0.00%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/8358.html">8358</a></td><td>金居</td><td data-sort="1000">1,000</td><td data-sort="0.0007">0.00%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2548.html">2548</a></td><td>華固</td><td data-sort="2000">2,000</td><td data-sort="0.0005">0.00%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/3706.html">3706</a></td><td>神達</td><td data-sort="1400">1,400</td><td data-sort="0.0002">0.00%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2881.html">2881</a></td><td>富邦金</td><td data-sort="250">250</td><td data-sort="0">0.00%</td></tr>
+<tr><td><a href="etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td><a href="stocks/2886.html">2886</a></td><td>兆豐金</td><td data-sort="1000">1,000</td><td data-sort="0">0.00%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2330.html">2330</a></td><td>台積電</td><td data-sort="138000">138,000</td><td data-sort="4.73">4.73%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2382.html">2382</a></td><td>廣達</td><td data-sort="968000">968,000</td><td data-sort="4.46">4.46%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2303.html">2303</a></td><td>聯電</td><td data-sort="2572000">2,572,000</td><td data-sort="4.26">4.26%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2881.html">2881</a></td><td>富邦金控</td><td data-sort="2638025">2,638,025</td><td data-sort="3.82">3.82%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2882.html">2882</a></td><td>國泰金</td><td data-sort="2747000">2,747,000</td><td data-sort="3.23">3.23%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3045.html">3045</a></td><td>台灣大</td><td data-sort="1851000">1,851,000</td><td data-sort="3.19">3.19%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2891.html">2891</a></td><td>中信金</td><td data-sort="3828000">3,828,000</td><td data-sort="3.16">3.16%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2885.html">2885</a></td><td>元大金</td><td data-sort="3507000">3,507,000</td><td data-sort="2.9">2.90%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3036.html">3036</a></td><td>文曄</td><td data-sort="663000">663,000</td><td data-sort="2.7">2.70%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2887.html">2887</a></td><td>台新新光金</td><td data-sort="6940000">6,940,000</td><td data-sort="2.49">2.49%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2880.html">2880</a></td><td>華南金控</td><td data-sort="4816000">4,816,000</td><td data-sort="2.35">2.35%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2883.html">2883</a></td><td>凱基金控</td><td data-sort="6211000">6,211,000</td><td data-sort="2.05">2.05%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/4904.html">4904</a></td><td>遠傳</td><td data-sort="1312000">1,312,000</td><td data-sort="1.94">1.94%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2360.html">2360</a></td><td>致茂</td><td data-sort="53000">53,000</td><td data-sort="1.79">1.79%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/1102.html">1102</a></td><td>亞泥</td><td data-sort="3355000">3,355,000</td><td data-sort="1.74">1.74%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2379.html">2379</a></td><td>瑞昱</td><td data-sort="213000">213,000</td><td data-sort="1.72">1.72%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6187.html">6187</a></td><td>萬潤科技</td><td data-sort="95000">95,000</td><td data-sort="1.61">1.61%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2383.html">2383</a></td><td>台光電子</td><td data-sort="23000">23,000</td><td data-sort="1.6">1.60%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/1402.html">1402</a></td><td>遠東新</td><td data-sort="3775000">3,775,000</td><td data-sort="1.51">1.51%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3037.html">3037</a></td><td>欣興</td><td data-sort="122000">122,000</td><td data-sort="1.51">1.51%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3189.html">3189</a></td><td>景碩科技</td><td data-sort="188000">188,000</td><td data-sort="1.38">1.38%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6515.html">6515</a></td><td>穎崴</td><td data-sort="9000">9,000</td><td data-sort="1.33">1.33%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2324.html">2324</a></td><td>仁寶</td><td data-sort="3062000">3,062,000</td><td data-sort="1.32">1.32%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3702.html">3702</a></td><td>大聯大</td><td data-sort="766000">766,000</td><td data-sort="1.27">1.27%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2345.html">2345</a></td><td>智邦</td><td data-sort="32000">32,000</td><td data-sort="1.21">1.21%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2357.html">2357</a></td><td>華碩</td><td data-sort="118000">118,000</td><td data-sort="1.14">1.14%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3026.html">3026</a></td><td>禾伸堂</td><td data-sort="230000">230,000</td><td data-sort="1.13">1.13%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/9904.html">9904</a></td><td>寶成</td><td data-sort="2851000">2,851,000</td><td data-sort="1.12">1.12%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6005.html">6005</a></td><td>群益證券</td><td data-sort="2364000">2,364,000</td><td data-sort="1.11">1.11%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2603.html">2603</a></td><td>長榮海運</td><td data-sort="361000">361,000</td><td data-sort="1.09">1.09%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6223.html">6223</a></td><td>旺矽</td><td data-sort="12000">12,000</td><td data-sort="1.07">1.07%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6274.html">6274</a></td><td>台燿</td><td data-sort="51000">51,000</td><td data-sort="1.0">1.00%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/1216.html">1216</a></td><td>統一</td><td data-sort="833000">833,000</td><td data-sort="0.95">0.95%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2368.html">2368</a></td><td>金像電子</td><td data-sort="48000">48,000</td><td data-sort="0.93">0.93%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/8069.html">8069</a></td><td>元太</td><td data-sort="290000">290,000</td><td data-sort="0.92">0.92%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3081.html">3081</a></td><td>聯亞光電</td><td data-sort="22000">22,000</td><td data-sort="0.88">0.88%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3711.html">3711</a></td><td>日月光投控</td><td data-sort="106000">106,000</td><td data-sort="0.87">0.87%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2467.html">2467</a></td><td>志聖</td><td data-sort="97000">97,000</td><td data-sort="0.86">0.86%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2308.html">2308</a></td><td>台達電子</td><td data-sort="27000">27,000</td><td data-sort="0.84">0.84%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/1785.html">1785</a></td><td>光洋科</td><td data-sort="358000">358,000</td><td data-sort="0.83">0.83%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2618.html">2618</a></td><td>長榮航</td><td data-sort="1583000">1,583,000</td><td data-sort="0.83">0.83%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3017.html">3017</a></td><td>奇鋐</td><td data-sort="22000">22,000</td><td data-sort="0.81">0.81%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3665.html">3665</a></td><td>貿聯-KY</td><td data-sort="25000">25,000</td><td data-sort="0.79">0.79%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2356.html">2356</a></td><td>英業達</td><td data-sort="963000">963,000</td><td data-sort="0.76">0.76%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3105.html">3105</a></td><td>穩懋</td><td data-sort="110000">110,000</td><td data-sort="0.76">0.76%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2486.html">2486</a></td><td>一詮精密</td><td data-sort="199000">199,000</td><td data-sort="0.75">0.75%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3374.html">3374</a></td><td>精材</td><td data-sort="141000">141,000</td><td data-sort="0.59">0.59%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6147.html">6147</a></td><td>頎邦</td><td data-sort="190000">190,000</td><td data-sort="0.59">0.59%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6451.html">6451</a></td><td>訊芯-KY</td><td data-sort="66000">66,000</td><td data-sort="0.57">0.57%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/5274.html">5274</a></td><td>信驊科技</td><td data-sort="2000">2,000</td><td data-sort="0.52">0.52%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2455.html">2455</a></td><td>全新</td><td data-sort="87000">87,000</td><td data-sort="0.47">0.47%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/7751.html">7751</a></td><td>竑騰</td><td data-sort="19000">19,000</td><td data-sort="0.47">0.47%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/4991.html">4991</a></td><td>環宇-KY</td><td data-sort="48000">48,000</td><td data-sort="0.46">0.46%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/8039.html">8039</a></td><td>台虹科技</td><td data-sort="209000">209,000</td><td data-sort="0.45">0.45%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3563.html">3563</a></td><td>牧德</td><td data-sort="33000">33,000</td><td data-sort="0.44">0.44%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/8155.html">8155</a></td><td>博智電子</td><td data-sort="73000">73,000</td><td data-sort="0.44">0.44%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2474.html">2474</a></td><td>可成</td><td data-sort="155000">155,000</td><td data-sort="0.43">0.43%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3706.html">3706</a></td><td>神達投資控股</td><td data-sort="355000">355,000</td><td data-sort="0.43">0.43%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6139.html">6139</a></td><td>亞翔工程</td><td data-sort="41000">41,000</td><td data-sort="0.43">0.43%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6584.html">6584</a></td><td>南俊國際</td><td data-sort="41000">41,000</td><td data-sort="0.41">0.41%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2006.html">2006</a></td><td>東和鋼鐵</td><td data-sort="412000">412,000</td><td data-sort="0.4">0.40%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/5904.html">5904</a></td><td>寶雅</td><td data-sort="49000">49,000</td><td data-sort="0.4">0.40%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2385.html">2385</a></td><td>群光</td><td data-sort="207000">207,000</td><td data-sort="0.39">0.39%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3714.html">3714</a></td><td>富采</td><td data-sort="386000">386,000</td><td data-sort="0.39">0.39%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/1326.html">1326</a></td><td>台化</td><td data-sort="548000">548,000</td><td data-sort="0.37">0.37%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2441.html">2441</a></td><td>超豐</td><td data-sort="232000">232,000</td><td data-sort="0.37">0.37%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3163.html">3163</a></td><td>波若威科技</td><td data-sort="26000">26,000</td><td data-sort="0.37">0.37%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3443.html">3443</a></td><td>創意電子</td><td data-sort="5000">5,000</td><td data-sort="0.37">0.37%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/5483.html">5483</a></td><td>中美晶</td><td data-sort="169000">169,000</td><td data-sort="0.36">0.36%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/8046.html">8046</a></td><td>南電</td><td data-sort="30000">30,000</td><td data-sort="0.36">0.36%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3131.html">3131</a></td><td>弘塑科技</td><td data-sort="8000">8,000</td><td data-sort="0.35">0.35%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2454.html">2454</a></td><td>聯發科</td><td data-sort="7000">7,000</td><td data-sort="0.34">0.34%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2855.html">2855</a></td><td>統一證券</td><td data-sort="550000">550,000</td><td data-sort="0.34">0.34%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6683.html">6683</a></td><td>雍智科技</td><td data-sort="13000">13,000</td><td data-sort="0.34">0.34%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/8996.html">8996</a></td><td>高力</td><td data-sort="22000">22,000</td><td data-sort="0.34">0.34%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2851.html">2851</a></td><td>中央再保</td><td data-sort="650000">650,000</td><td data-sort="0.32">0.32%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3227.html">3227</a></td><td>原相</td><td data-sort="94000">94,000</td><td data-sort="0.31">0.31%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2637.html">2637</a></td><td>慧洋-KY</td><td data-sort="273000">273,000</td><td data-sort="0.3">0.30%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2903.html">2903</a></td><td>遠百</td><td data-sort="882000">882,000</td><td data-sort="0.3">0.30%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/8112.html">8112</a></td><td>至上電子</td><td data-sort="240000">240,000</td><td data-sort="0.3">0.30%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/1227.html">1227</a></td><td>佳格</td><td data-sort="676000">676,000</td><td data-sort="0.29">0.29%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2850.html">2850</a></td><td>新光產險</td><td data-sort="146000">146,000</td><td data-sort="0.29">0.29%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2897.html">2897</a></td><td>王道銀行</td><td data-sort="1940000">1,940,000</td><td data-sort="0.29">0.29%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/1434.html">1434</a></td><td>福懋</td><td data-sort="1232000">1,232,000</td><td data-sort="0.28">0.28%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2501.html">2501</a></td><td>國建</td><td data-sort="846000">846,000</td><td data-sort="0.28">0.28%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3010.html">3010</a></td><td>華立</td><td data-sort="147000">147,000</td><td data-sort="0.28">0.28%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/8070.html">8070</a></td><td>長華*</td><td data-sort="408000">408,000</td><td data-sort="0.28">0.28%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/9907.html">9907</a></td><td>統一實</td><td data-sort="1116000">1,116,000</td><td data-sort="0.27">0.27%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2820.html">2820</a></td><td>華票</td><td data-sort="1041000">1,041,000</td><td data-sort="0.26">0.26%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3167.html">3167</a></td><td>大量</td><td data-sort="23000">23,000</td><td data-sort="0.25">0.25%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/1560.html">1560</a></td><td>中砂</td><td data-sort="23000">23,000</td><td data-sort="0.22">0.22%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2313.html">2313</a></td><td>華通</td><td data-sort="60000">60,000</td><td data-sort="0.21">0.21%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/8210.html">8210</a></td><td>勤誠興業</td><td data-sort="9000">9,000</td><td data-sort="0.19">0.19%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6805.html">6805</a></td><td>富世達</td><td data-sort="7000">7,000</td><td data-sort="0.18">0.18%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6023.html">6023</a></td><td>元大期貨</td><td data-sort="115000">115,000</td><td data-sort="0.17">0.17%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3264.html">3264</a></td><td>欣銓</td><td data-sort="38000">38,000</td><td data-sort="0.13">0.13%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2206.html">2206</a></td><td>三陽工業</td><td data-sort="131000">131,000</td><td data-sort="0.12">0.12%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2377.html">2377</a></td><td>微星</td><td data-sort="74000">74,000</td><td data-sort="0.12">0.12%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3596.html">3596</a></td><td>智易科技</td><td data-sort="45000">45,000</td><td data-sort="0.12">0.12%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/8415.html">8415</a></td><td>大國鋼</td><td data-sort="216000">216,000</td><td data-sort="0.12">0.12%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2353.html">2353</a></td><td>宏碁</td><td data-sort="264000">264,000</td><td data-sort="0.11">0.11%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/2606.html">2606</a></td><td>裕民</td><td data-sort="120000">120,000</td><td data-sort="0.11">0.11%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/3005.html">3005</a></td><td>神基科技</td><td data-sort="74000">74,000</td><td data-sort="0.11">0.11%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/4915.html">4915</a></td><td>致伸</td><td data-sort="99000">99,000</td><td data-sort="0.11">0.11%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6121.html">6121</a></td><td>新普科技</td><td data-sort="20000">20,000</td><td data-sort="0.11">0.11%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6176.html">6176</a></td><td>瑞儀光電</td><td data-sort="73000">73,000</td><td data-sort="0.11">0.11%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/9910.html">9910</a></td><td>豐泰</td><td data-sort="104000">104,000</td><td data-sort="0.11">0.11%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/9917.html">9917</a></td><td>中保</td><td data-sort="64000">64,000</td><td data-sort="0.11">0.11%</td></tr>
+<tr><td><a href="etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td><a href="stocks/6472.html">6472</a></td><td>保瑞</td><td data-sort="17000">17,000</td><td data-sort="0.09">0.09%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2330.html">2330</a></td><td>台灣積體電路製造</td><td data-sort="1298000">1,298,000</td><td data-sort="26.94">26.94%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/1216.html">1216</a></td><td>統一企業</td><td data-sort="5227000">5,227,000</td><td data-sort="3.63">3.63%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2881.html">2881</a></td><td>富邦金融控股</td><td data-sort="4102000">4,102,000</td><td data-sort="3.61">3.61%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2412.html">2412</a></td><td>中華電信</td><td data-sort="2325000">2,325,000</td><td data-sort="2.94">2.94%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2891.html">2891</a></td><td>中國信託金融控股</td><td data-sort="5402000">5,402,000</td><td data-sort="2.71">2.71%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2049.html">2049</a></td><td>上銀科技</td><td data-sort="739000">739,000</td><td data-sort="2.66">2.66%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/4904.html">4904</a></td><td>遠傳電信</td><td data-sort="2854000">2,854,000</td><td data-sort="2.57">2.57%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/1477.html">1477</a></td><td>聚陽實業</td><td data-sort="1218000">1,218,000</td><td data-sort="2.43">2.43%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/3711.html">3711</a></td><td>日月光投資控股</td><td data-sort="462000">462,000</td><td data-sort="2.32">2.32%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2308.html">2308</a></td><td>台達電子工業</td><td data-sort="119000">119,000</td><td data-sort="2.26">2.26%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2059.html">2059</a></td><td>川湖科技</td><td data-sort="49000">49,000</td><td data-sort="2.18">2.18%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2360.html">2360</a></td><td>致茂電子</td><td data-sort="100000">100,000</td><td data-sort="2.05">2.05%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/3017.html">3017</a></td><td>奇鋐科技</td><td data-sort="91000">91,000</td><td data-sort="2.05">2.05%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/6789.html">6789</a></td><td>采鈺科技</td><td data-sort="378000">378,000</td><td data-sort="2.03">2.03%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2368.html">2368</a></td><td>金像電子（股）公司</td><td data-sort="165000">165,000</td><td data-sort="1.95">1.95%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/8299.html">8299</a></td><td>群聯電子</td><td data-sort="80000">80,000</td><td data-sort="1.94">1.94%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/6669.html">6669</a></td><td>緯穎科技服務</td><td data-sort="41000">41,000</td><td data-sort="1.92">1.92%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/3661.html">3661</a></td><td>世芯電子</td><td data-sort="39000">39,000</td><td data-sort="1.65">1.65%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/6223.html">6223</a></td><td>旺矽科技</td><td data-sort="30000">30,000</td><td data-sort="1.62">1.62%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2344.html">2344</a></td><td>華邦電子</td><td data-sort="1336000">1,336,000</td><td data-sort="1.59">1.59%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2383.html">2383</a></td><td>台光電子材料</td><td data-sort="37000">37,000</td><td data-sort="1.56">1.56%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2345.html">2345</a></td><td>智邦科技</td><td data-sort="66000">66,000</td><td data-sort="1.52">1.52%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/3293.html">3293</a></td><td>鈊象電子</td><td data-sort="229000">229,000</td><td data-sort="1.51">1.51%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2454.html">2454</a></td><td>聯發科技</td><td data-sort="47000">47,000</td><td data-sort="1.4">1.40%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/7769.html">7769</a></td><td>鴻勁精密</td><td data-sort="22000">22,000</td><td data-sort="1.39">1.39%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/6781.html">6781</a></td><td>AES Holding Co Ltd</td><td data-sort="127000">127,000</td><td data-sort="1.35">1.35%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/3529.html">3529</a></td><td>力旺電子</td><td data-sort="37000">37,000</td><td data-sort="1.3">1.30%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/6488.html">6488</a></td><td>環球晶圓</td><td data-sort="190000">190,000</td><td data-sort="1.24">1.24%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/6805.html">6805</a></td><td>富世達</td><td data-sort="77000">77,000</td><td data-sort="1.22">1.22%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/6415.html">6415</a></td><td>矽力杰</td><td data-sort="256000">256,000</td><td data-sort="1.1">1.10%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/3653.html">3653</a></td><td>健策精密工業</td><td data-sort="33000">33,000</td><td data-sort="1.05">1.05%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/6442.html">6442</a></td><td>光紅建聖</td><td data-sort="64000">64,000</td><td data-sort="1.02">1.02%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/8046.html">8046</a></td><td>南亞電路板</td><td data-sort="134000">134,000</td><td data-sort="0.97">0.97%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/8996.html">8996</a></td><td>高力熱處理工業</td><td data-sort="96000">96,000</td><td data-sort="0.91">0.91%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/3665.html">3665</a></td><td>貿聯控股（BizLink Holding In</td><td data-sort="41000">41,000</td><td data-sort="0.79">0.79%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2408.html">2408</a></td><td>南亞科技</td><td data-sort="221000">221,000</td><td data-sort="0.63">0.63%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/4749.html">4749</a></td><td>新應材</td><td data-sort="57000">57,000</td><td data-sort="0.53">0.53%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2395.html">2395</a></td><td>研華</td><td data-sort="104000">104,000</td><td data-sort="0.44">0.44%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/3533.html">3533</a></td><td>嘉澤端子工業</td><td data-sort="19000">19,000</td><td data-sort="0.41">0.41%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/8210.html">8210</a></td><td>勤誠興業</td><td data-sort="32000">32,000</td><td data-sort="0.41">0.41%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2317.html">2317</a></td><td>鴻海精密工業</td><td data-sort="117000">117,000</td><td data-sort="0.27">0.27%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2474.html">2474</a></td><td>可成科技</td><td data-sort="139000">139,000</td><td data-sort="0.24">0.24%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/4958.html">4958</a></td><td>臻鼎科技控股</td><td data-sort="53000">53,000</td><td data-sort="0.19">0.19%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/3105.html">3105</a></td><td>穩懋半導體</td><td data-sort="41000">41,000</td><td data-sort="0.17">0.17%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/3189.html">3189</a></td><td>景碩科技</td><td data-sort="24000">24,000</td><td data-sort="0.11">0.11%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/6239.html">6239</a></td><td>力成科技</td><td data-sort="25000">25,000</td><td data-sort="0.06">0.06%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/3037.html">3037</a></td><td>欣興電子</td><td data-sort="6000">6,000</td><td data-sort="0.05">0.05%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/3264.html">3264</a></td><td>欣銓科技</td><td data-sort="26000">26,000</td><td data-sort="0.05">0.05%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/1519.html">1519</a></td><td>華城電機</td><td data-sort="5000">5,000</td><td data-sort="0.04">0.04%</td></tr>
+<tr><td><a href="etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td><a href="stocks/2382.html">2382</a></td><td>廣達電腦</td><td data-sort="14000">14,000</td><td data-sort="0.04">0.04%</td></tr>
+<tr><td><a href="etfs/00988A.html">00988A</a></td><td>主動統一全球創新</td><td><a href="stocks/2454.html">2454</a></td><td>聯發科</td><td data-sort="315000">315,000</td><td data-sort="2.95">2.95%</td></tr>
+<tr><td><a href="etfs/00988A.html">00988A</a></td><td>主動統一全球創新</td><td><a href="stocks/2383.html">2383</a></td><td>台光電</td><td data-sort="217000">217,000</td><td data-sort="2.94">2.94%</td></tr>
+<tr><td><a href="etfs/00988A.html">00988A</a></td><td>主動統一全球創新</td><td><a href="stocks/3037.html">3037</a></td><td>欣興</td><td data-sort="1090000">1,090,000</td><td data-sort="2.64">2.64%</td></tr>
+<tr><td><a href="etfs/00988A.html">00988A</a></td><td>主動統一全球創新</td><td><a href="stocks/2330.html">2330</a></td><td>台積電</td><td data-sort="345000">345,000</td><td data-sort="2.15">2.15%</td></tr>
+<tr><td><a href="etfs/00988A.html">00988A</a></td><td>主動統一全球創新</td><td><a href="stocks/5274.html">5274</a></td><td>信驊</td><td data-sort="40000">40,000</td><td data-sort="1.96">1.96%</td></tr>
+<tr><td><a href="etfs/00988A.html">00988A</a></td><td>主動統一全球創新</td><td><a href="stocks/6515.html">6515</a></td><td>穎崴</td><td data-sort="67000">67,000</td><td data-sort="1.94">1.94%</td></tr>
+<tr><td><a href="etfs/00988A.html">00988A</a></td><td>主動統一全球創新</td><td><a href="stocks/2308.html">2308</a></td><td>台達電</td><td data-sort="307000">307,000</td><td data-sort="1.82">1.82%</td></tr>
+<tr><td><a href="etfs/00988A.html">00988A</a></td><td>主動統一全球創新</td><td><a href="stocks/3711.html">3711</a></td><td>日月光投控</td><td data-sort="1100000">1,100,000</td><td data-sort="1.66">1.66%</td></tr>
+<tr><td><a href="etfs/00988A.html">00988A</a></td><td>主動統一全球創新</td><td><a href="stocks/6223.html">6223</a></td><td>旺矽</td><td data-sort="90000">90,000</td><td data-sort="1.56">1.56%</td></tr>
+<tr><td><a href="etfs/00988A.html">00988A</a></td><td>主動統一全球創新</td><td><a href="stocks/3017.html">3017</a></td><td>奇鋐</td><td data-sort="215000">215,000</td><td data-sort="1.51">1.51%</td></tr>
+<tr><td><a href="etfs/00988A.html">00988A</a></td><td>主動統一全球創新</td><td><a href="stocks/6274.html">6274</a></td><td>台燿</td><td data-sort="230000">230,000</td><td data-sort="0.92">0.92%</td></tr>
+<tr><td><a href="etfs/00988A.html">00988A</a></td><td>主動統一全球創新</td><td><a href="stocks/7769.html">7769</a></td><td>鴻勁</td><td data-sort="36000">36,000</td><td data-sort="0.75">0.75%</td></tr>
+<tr><td><a href="etfs/00988A.html">00988A</a></td><td>主動統一全球創新</td><td><a href="stocks/2360.html">2360</a></td><td>致茂</td><td data-sort="110000">110,000</td><td data-sort="0.68">0.68%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/2330.html">2330</a></td><td>台積電</td><td data-sort="1761000">1,761,000</td><td data-sort="7.9658">7.97%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/2383.html">2383</a></td><td>台光電</td><td data-sort="536000">536,000</td><td data-sort="4.9401">4.94%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/6669.html">6669</a></td><td>緯穎</td><td data-sort="465000">465,000</td><td data-sort="4.75">4.75%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/2345.html">2345</a></td><td>智邦</td><td data-sort="916000">916,000</td><td data-sort="4.5825">4.58%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3037.html">3037</a></td><td>欣興</td><td data-sort="2302000">2,302,000</td><td data-sort="3.7744">3.77%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/8299.html">8299</a></td><td>群聯</td><td data-sort="711000">711,000</td><td data-sort="3.7628">3.76%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3661.html">3661</a></td><td>世芯-KY</td><td data-sort="393000">393,000</td><td data-sort="3.6143">3.61%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/8996.html">8996</a></td><td>高力</td><td data-sort="1689000">1,689,000</td><td data-sort="3.508">3.51%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3443.html">3443</a></td><td>創意</td><td data-sort="360000">360,000</td><td data-sort="3.4833">3.48%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/2059.html">2059</a></td><td>川湖</td><td data-sort="358000">358,000</td><td data-sort="3.4747">3.47%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/6223.html">6223</a></td><td>旺矽</td><td data-sort="289000">289,000</td><td data-sort="3.4023">3.40%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/6510.html">6510</a></td><td>精測</td><td data-sort="422000">422,000</td><td data-sort="3.1477">3.15%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3105.html">3105</a></td><td>穩懋</td><td data-sort="3433000">3,433,000</td><td data-sort="3.1435">3.14%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/6515.html">6515</a></td><td>穎崴</td><td data-sort="151000">151,000</td><td data-sort="2.9492">2.95%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3665.html">3665</a></td><td>貿聯-KY</td><td data-sort="667000">667,000</td><td data-sort="2.7906">2.79%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/7769.html">7769</a></td><td>鴻勁</td><td data-sort="194000">194,000</td><td data-sort="2.6714">2.67%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/8046.html">8046</a></td><td>南電</td><td data-sort="1658000">1,658,000</td><td data-sort="2.6026">2.60%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3017.html">3017</a></td><td>奇鋐</td><td data-sort="501000">501,000</td><td data-sort="2.4563">2.46%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/2408.html">2408</a></td><td>南亞科</td><td data-sort="3280000">3,280,000</td><td data-sort="2.0404">2.04%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3081.html">3081</a></td><td>聯亞</td><td data-sort="380000">380,000</td><td data-sort="2.0148">2.01%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3533.html">3533</a></td><td>嘉澤</td><td data-sort="420000">420,000</td><td data-sort="1.9543">1.95%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/6584.html">6584</a></td><td>南俊國際</td><td data-sort="1337000">1,337,000</td><td data-sort="1.7569">1.76%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3163.html">3163</a></td><td>波若威</td><td data-sort="923000">923,000</td><td data-sort="1.7511">1.75%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/2368.html">2368</a></td><td>金像電</td><td data-sort="669000">669,000</td><td data-sort="1.7235">1.72%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/6274.html">6274</a></td><td>台燿</td><td data-sort="636000">636,000</td><td data-sort="1.6575">1.66%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/5274.html">5274</a></td><td>信驊</td><td data-sort="45000">45,000</td><td data-sort="1.5453">1.55%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/6531.html">6531</a></td><td>愛普*</td><td data-sort="703000">703,000</td><td data-sort="1.5162">1.52%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/2308.html">2308</a></td><td>台達電</td><td data-sort="357000">357,000</td><td data-sort="1.4794">1.48%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/2455.html">2455</a></td><td>全新</td><td data-sort="1927000">1,927,000</td><td data-sort="1.3796">1.38%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3653.html">3653</a></td><td>健策</td><td data-sort="197000">197,000</td><td data-sort="1.3632">1.36%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/7751.html">7751</a></td><td>竑騰</td><td data-sort="387000">387,000</td><td data-sort="1.2559">1.26%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/2454.html">2454</a></td><td>聯發科</td><td data-sort="180000">180,000</td><td data-sort="1.1719">1.17%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/2360.html">2360</a></td><td>致茂</td><td data-sort="207000">207,000</td><td data-sort="0.926">0.93%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/4991.html">4991</a></td><td>環宇-KY</td><td data-sort="692000">692,000</td><td data-sort="0.8872">0.89%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/6442.html">6442</a></td><td>光聖</td><td data-sort="238000">238,000</td><td data-sort="0.827">0.83%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3036.html">3036</a></td><td>文曄</td><td data-sort="1177000">1,177,000</td><td data-sort="0.6346">0.63%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/5289.html">5289</a></td><td>宜鼎</td><td data-sort="142000">142,000</td><td data-sort="0.4991">0.50%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3189.html">3189</a></td><td>景碩</td><td data-sort="486013">486,013</td><td data-sort="0.4717">0.47%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/2337.html">2337</a></td><td>旺宏</td><td data-sort="1271000">1,271,000</td><td data-sort="0.4124">0.41%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3711.html">3711</a></td><td>日月光投控</td><td data-sort="320000">320,000</td><td data-sort="0.3495">0.35%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3260.html">3260</a></td><td>威剛</td><td data-sort="393000">393,000</td><td data-sort="0.3335">0.33%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3491.html">3491</a></td><td>昇達科</td><td data-sort="97000">97,000</td><td data-sort="0.3273">0.33%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3324.html">3324</a></td><td>雙鴻</td><td data-sort="151000">151,000</td><td data-sort="0.3">0.30%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/2344.html">2344</a></td><td>華邦電</td><td data-sort="893000">893,000</td><td data-sort="0.2309">0.23%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/2327.html">2327</a></td><td>國巨*</td><td data-sort="200000">200,000</td><td data-sort="0.1819">0.18%</td></tr>
+<tr><td><a href="etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td><a href="stocks/3583.html">3583</a></td><td>辛耘</td><td data-sort="33000">33,000</td><td data-sort="0.0585">0.06%</td></tr>
+<tr><td><a href="etfs/00997A.html">00997A</a></td><td>主動群益美國增長</td><td><a href="stocks/2330.html">2330</a></td><td>台積電</td><td data-sort="135000">135,000</td><td data-sort="2.3961">2.40%</td></tr>
+<tr><td><a href="etfs/00997A.html">00997A</a></td><td>主動群益美國增長</td><td><a href="stocks/2308.html">2308</a></td><td>台達電</td><td data-sort="141000">141,000</td><td data-sort="2.3758">2.38%</td></tr>
+<tr><td><a href="etfs/00997A.html">00997A</a></td><td>主動群益美國增長</td><td><a href="stocks/2345.html">2345</a></td><td>智邦</td><td data-sort="108000">108,000</td><td data-sort="2.2589">2.26%</td></tr>
+<tr><td><a href="etfs/00997A.html">00997A</a></td><td>主動群益美國增長</td><td><a href="stocks/2383.html">2383</a></td><td>台光電</td><td data-sort="57000">57,000</td><td data-sort="2.1927">2.19%</td></tr>
+<tr><td><a href="etfs/00997A.html">00997A</a></td><td>主動群益美國增長</td><td><a href="stocks/6515.html">6515</a></td><td>穎崴</td><td data-sort="10000">10,000</td><td data-sort="0.8241">0.82%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2330.html">2330</a></td><td>台灣積體電路製造</td><td data-sort="496000">496,000</td><td data-sort="6.8">6.80%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2308.html">2308</a></td><td>台達電子工業</td><td data-sort="347000">347,000</td><td data-sort="4.36">4.36%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2357.html">2357</a></td><td>華碩電腦</td><td data-sort="758000">758,000</td><td data-sort="2.94">2.94%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2383.html">2383</a></td><td>台光電子材料</td><td data-sort="100000">100,000</td><td data-sort="2.79">2.79%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/1477.html">1477</a></td><td>聚陽實業</td><td data-sort="2041000">2,041,000</td><td data-sort="2.69">2.69%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2360.html">2360</a></td><td>致茂電子</td><td data-sort="169000">169,000</td><td data-sort="2.29">2.29%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2618.html">2618</a></td><td>長榮航空</td><td data-sort="10917000">10,917,000</td><td data-sort="2.29">2.29%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2382.html">2382</a></td><td>廣達電腦</td><td data-sort="1211000">1,211,000</td><td data-sort="2.24">2.24%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2345.html">2345</a></td><td>智邦科技</td><td data-sort="146000">146,000</td><td data-sort="2.21">2.21%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2317.html">2317</a></td><td>鴻海精密工業</td><td data-sort="1405000">1,405,000</td><td data-sort="2.11">2.11%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2385.html">2385</a></td><td>群光電子</td><td data-sort="2811000">2,811,000</td><td data-sort="2.1">2.10%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/7769.html">7769</a></td><td>鴻勁精密</td><td data-sort="50000">50,000</td><td data-sort="2.09">2.09%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/3017.html">3017</a></td><td>奇鋐科技</td><td data-sort="131000">131,000</td><td data-sort="1.95">1.95%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2368.html">2368</a></td><td>金像電子（股）公司</td><td data-sort="235000">235,000</td><td data-sort="1.83">1.83%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/3526.html">3526</a></td><td>凡甲科技</td><td data-sort="807000">807,000</td><td data-sort="1.83">1.83%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/6669.html">6669</a></td><td>緯穎科技服務</td><td data-sort="59000">59,000</td><td data-sort="1.83">1.83%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/1319.html">1319</a></td><td>東陽實業廠</td><td data-sort="3753000">3,753,000</td><td data-sort="1.79">1.79%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2408.html">2408</a></td><td>南亞科技</td><td data-sort="952000">952,000</td><td data-sort="1.79">1.79%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/5274.html">5274</a></td><td>信驊科技</td><td data-sort="17000">17,000</td><td data-sort="1.77">1.77%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/8210.html">8210</a></td><td>勤誠興業</td><td data-sort="205000">205,000</td><td data-sort="1.75">1.75%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2548.html">2548</a></td><td>華固建設</td><td data-sort="2155000">2,155,000</td><td data-sort="1.65">1.65%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/3592.html">3592</a></td><td>瑞鼎科技</td><td data-sort="1094000">1,094,000</td><td data-sort="1.65">1.65%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/6121.html">6121</a></td><td>新普科技</td><td data-sort="710000">710,000</td><td data-sort="1.58">1.58%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/4915.html">4915</a></td><td>致伸科技</td><td data-sort="3560000">3,560,000</td><td data-sort="1.57">1.57%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/3665.html">3665</a></td><td>貿聯控股（BizLink Holding In</td><td data-sort="119000">119,000</td><td data-sort="1.51">1.51%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/6515.html">6515</a></td><td>穎崴科技</td><td data-sort="25000">25,000</td><td data-sort="1.48">1.48%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/6223.html">6223</a></td><td>旺矽科技</td><td data-sort="41000">41,000</td><td data-sort="1.46">1.46%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2393.html">2393</a></td><td>億光電子工業</td><td data-sort="3826000">3,826,000</td><td data-sort="1.45">1.45%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2344.html">2344</a></td><td>華邦電子</td><td data-sort="1840000">1,840,000</td><td data-sort="1.44">1.44%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/8299.html">8299</a></td><td>群聯電子</td><td data-sort="86000">86,000</td><td data-sort="1.38">1.38%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2059.html">2059</a></td><td>川湖科技</td><td data-sort="46000">46,000</td><td data-sort="1.35">1.35%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/9910.html">9910</a></td><td>豐泰企業</td><td data-sort="3087000">3,087,000</td><td data-sort="1.31">1.31%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2731.html">2731</a></td><td>雄獅旅行社</td><td data-sort="1307000">1,307,000</td><td data-sort="1.26">1.26%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/3711.html">3711</a></td><td>日月光投資控股</td><td data-sort="380000">380,000</td><td data-sort="1.26">1.26%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/6274.html">6274</a></td><td>台燿科技</td><td data-sort="141000">141,000</td><td data-sort="1.11">1.11%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/6670.html">6670</a></td><td>復盛應用科技</td><td data-sort="656000">656,000</td><td data-sort="1.04">1.04%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/9941.html">9941</a></td><td>裕融企業</td><td data-sort="2311000">2,311,000</td><td data-sort="1.02">1.02%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/5534.html">5534</a></td><td>長虹建設</td><td data-sort="2175000">2,175,000</td><td data-sort="1.0">1.00%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/6805.html">6805</a></td><td>富世達</td><td data-sort="94000">94,000</td><td data-sort="0.99">0.99%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2727.html">2727</a></td><td>王品餐飲</td><td data-sort="680000">680,000</td><td data-sort="0.97">0.97%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/8454.html">8454</a></td><td>富邦媒體科技</td><td data-sort="837000">837,000</td><td data-sort="0.95">0.95%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/9938.html">9938</a></td><td>台灣百和工業</td><td data-sort="3590000">3,590,000</td><td data-sort="0.95">0.95%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/9802.html">9802</a></td><td>鈺齊國際</td><td data-sort="2003000">2,003,000</td><td data-sort="0.92">0.92%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/3653.html">3653</a></td><td>健策精密工業</td><td data-sort="42000">42,000</td><td data-sort="0.88">0.88%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2204.html">2204</a></td><td>中華汽車工業</td><td data-sort="2777000">2,777,000</td><td data-sort="0.87">0.87%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2347.html">2347</a></td><td>聯強國際</td><td data-sort="1754000">1,754,000</td><td data-sort="0.87">0.87%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/8112.html">8112</a></td><td>至上電子</td><td data-sort="1673000">1,673,000</td><td data-sort="0.83">0.83%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/4105.html">4105</a></td><td>台灣東洋藥品工業</td><td data-sort="1795000">1,795,000</td><td data-sort="0.82">0.82%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/3090.html">3090</a></td><td>日電貿</td><td data-sort="920000">920,000</td><td data-sort="0.79">0.79%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/3045.html">3045</a></td><td>台灣大哥大</td><td data-sort="1123000">1,123,000</td><td data-sort="0.78">0.78%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/9907.html">9907</a></td><td>統一實業</td><td data-sort="7791000">7,791,000</td><td data-sort="0.76">0.76%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/6768.html">6768</a></td><td>志強國際企業</td><td data-sort="1477000">1,477,000</td><td data-sort="0.75">0.75%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/4746.html">4746</a></td><td>台耀化學</td><td data-sort="2237000">2,237,000</td><td data-sort="0.73">0.73%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/4904.html">4904</a></td><td>遠傳電信</td><td data-sort="1202000">1,202,000</td><td data-sort="0.72">0.72%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/2454.html">2454</a></td><td>聯發科技</td><td data-sort="34000">34,000</td><td data-sort="0.67">0.67%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/3227.html">3227</a></td><td>原相科技</td><td data-sort="462000">462,000</td><td data-sort="0.62">0.62%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/9939.html">9939</a></td><td>宏全國際</td><td data-sort="634000">634,000</td><td data-sort="0.48">0.48%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/1215.html">1215</a></td><td>台灣卜蜂企業</td><td data-sort="512000">512,000</td><td data-sort="0.43">0.43%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/9958.html">9958</a></td><td>世紀鋼鐵結構</td><td data-sort="614000">614,000</td><td data-sort="0.39">0.39%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/6146.html">6146</a></td><td>耕興</td><td data-sort="288000">288,000</td><td data-sort="0.37">0.37%</td></tr>
+<tr><td><a href="etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td><a href="stocks/6782.html">6782</a></td><td>視陽光學</td><td data-sort="238000">238,000</td><td data-sort="0.27">0.27%</td></tr>
+</tbody></table>
+<div class="foot">資料最新日期 2026-05-16　·　頁面生成 2026-05-16 10:40　·
+<a href="https://github.com/Simon99/active-etf-tracker">原始碼</a></div>
+</body></html>

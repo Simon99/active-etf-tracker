@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>00988A 主動統一全球創新 — 統一投信</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","SF Pro Text",sans-serif;background:#0d1117;color:#e6edf3;line-height:1.55;padding:20px;max-width:1500px;margin:0 auto}
+h1{font-size:24px;font-weight:600;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:16px}
+h2{font-size:18px;margin:28px 0 12px;color:#58a6ff;border-left:3px solid #58a6ff;padding-left:10px}
+h3{font-size:15px;margin:18px 0 8px;color:#c9d1d9}
+nav{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:13px}
+nav a{color:#58a6ff;margin-right:14px;text-decoration:none}
+nav a:hover{text-decoration:underline}
+nav a.cur{color:#fff;font-weight:600}
+table{border-collapse:collapse;font-size:12px;margin:8px 0;background:#161b22;width:100%}
+th{background:#21262d;color:#c9d1d9;padding:6px 8px;text-align:right;border:1px solid #30363d;cursor:pointer;user-select:none;font-weight:600;position:sticky;top:0}
+th:first-child,td:first-child{text-align:left}
+th:hover{background:#2d333b}
+td{padding:5px 8px;border:1px solid #30363d;text-align:right;font-variant-numeric:tabular-nums}
+tr:hover td{background:#1c2128}
+.pos{color:#3fb950}.neg{color:#f85149}.mute{color:#6e7681}
+.na{color:#6e7681;font-family:monospace}
+a{color:#58a6ff;text-decoration:none}
+a:hover{text-decoration:underline}
+.tag{display:inline-block;padding:2px 6px;border-radius:3px;background:#21262d;font-size:11px;margin-right:4px}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}
+.metric{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:10px;font-size:12px}
+.metric .v{font-size:18px;font-weight:600;color:#58a6ff;display:block;margin-top:2px}
+.banner{background:#1c2128;border:1px solid #30363d;border-left:3px solid #d29922;border-radius:6px;padding:10px 14px;margin:12px 0;font-size:13px;color:#c9d1d9}
+.toggle{display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:4px;margin-bottom:12px}
+.toggle a{display:inline-block;padding:5px 12px;border-radius:4px;font-size:13px}
+.toggle a.cur{background:#1f6feb;color:#fff}
+.foot{margin-top:32px;padding-top:12px;border-top:1px solid #30363d;color:#6e7681;font-size:11px}
+</style>
+<script>
+function sortTable(table,col,asc){
+  const rows=Array.from(table.querySelectorAll('tbody tr'));
+  rows.sort((a,b)=>{
+    let av=a.cells[col].getAttribute('data-sort')||a.cells[col].textContent;
+    let bv=b.cells[col].getAttribute('data-sort')||b.cells[col].textContent;
+    const an=parseFloat(av),bn=parseFloat(bv);
+    if(!isNaN(an)&&!isNaN(bn))return asc?an-bn:bn-an;
+    return asc?av.localeCompare(bv):bv.localeCompare(av);
+  });
+  const tb=table.querySelector('tbody');rows.forEach(r=>tb.appendChild(r));
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('table.sortable').forEach(t=>{
+    t.querySelectorAll('th').forEach((th,i)=>{
+      let asc=true;
+      th.addEventListener('click',()=>{sortTable(t,i,asc);asc=!asc;});
+    });
+  });
+});
+</script>
+</head><body>
+<nav><a href="../index.html" class="">總覽</a> <a href="../daily.html" class="">每日快照</a> <a href="../changes.html" class="">持股異動</a> <a href="../overlap.html" class="">持股重疊</a> <a href="../momentum.html" class="">同步加碼</a> <a href="../radar.html" class="">新增/賣出雷達</a></nav>
+<h1>00988A 主動統一全球創新 — 統一投信</h1>
+
+<div class="metric-grid">
+<div class="metric">NAV<span class="v">19.72</span></div>
+<div class="metric">基金規模 (B)<span class="v">36.35</span></div>
+<div class="metric">受益權單位<span class="v">1,842,937,000</span></div>
+<div class="metric">持股數<span class="v">13</span></div>
+<div class="metric">快照日期<span class="v">2026-05-16</span></div>
+</div>
+<h2>① 技術線型（功能 5）</h2>
+<div class="banner">技術圖表（MA5/20/60/120/240 + Bollinger + RSI + MACD）→ 待接 yfinance / FinMind ETF 報價，本階段以 &lt;NA&gt; 顯示。</div>
+<h2>② 最新持股（2026-05-16）</h2>
+<table class="sortable"><thead><tr><th>個股</th><th>名稱</th><th>股數</th><th>權重 %</th></tr></thead><tbody>
+<tr><td><a href="../stocks/2454.html">2454</a></td><td>聯發科</td><td>315,000</td><td>2.95%</td></tr>
+<tr><td><a href="../stocks/2383.html">2383</a></td><td>台光電</td><td>217,000</td><td>2.94%</td></tr>
+<tr><td><a href="../stocks/3037.html">3037</a></td><td>欣興</td><td>1,090,000</td><td>2.64%</td></tr>
+<tr><td><a href="../stocks/2330.html">2330</a></td><td>台積電</td><td>345,000</td><td>2.15%</td></tr>
+<tr><td><a href="../stocks/5274.html">5274</a></td><td>信驊</td><td>40,000</td><td>1.96%</td></tr>
+<tr><td><a href="../stocks/6515.html">6515</a></td><td>穎崴</td><td>67,000</td><td>1.94%</td></tr>
+<tr><td><a href="../stocks/2308.html">2308</a></td><td>台達電</td><td>307,000</td><td>1.82%</td></tr>
+<tr><td><a href="../stocks/3711.html">3711</a></td><td>日月光投控</td><td>1,100,000</td><td>1.66%</td></tr>
+<tr><td><a href="../stocks/6223.html">6223</a></td><td>旺矽</td><td>90,000</td><td>1.56%</td></tr>
+<tr><td><a href="../stocks/3017.html">3017</a></td><td>奇鋐</td><td>215,000</td><td>1.51%</td></tr>
+<tr><td><a href="../stocks/6274.html">6274</a></td><td>台燿</td><td>230,000</td><td>0.92%</td></tr>
+<tr><td><a href="../stocks/7769.html">7769</a></td><td>鴻勁</td><td>36,000</td><td>0.75%</td></tr>
+<tr><td><a href="../stocks/2360.html">2360</a></td><td>致茂</td><td>110,000</td><td>0.68%</td></tr>
+</tbody></table>
+<div class="foot">資料最新日期 2026-05-16　·　頁面生成 2026-05-16 10:40　·
+<a href="https://github.com/Simon99/active-etf-tracker">原始碼</a></div>
+</body></html>

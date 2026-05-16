@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3665 貿聯控股（BizLink Holding In — ETF 持有狀況</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","SF Pro Text",sans-serif;background:#0d1117;color:#e6edf3;line-height:1.55;padding:20px;max-width:1500px;margin:0 auto}
+h1{font-size:24px;font-weight:600;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:16px}
+h2{font-size:18px;margin:28px 0 12px;color:#58a6ff;border-left:3px solid #58a6ff;padding-left:10px}
+h3{font-size:15px;margin:18px 0 8px;color:#c9d1d9}
+nav{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:13px}
+nav a{color:#58a6ff;margin-right:14px;text-decoration:none}
+nav a:hover{text-decoration:underline}
+nav a.cur{color:#fff;font-weight:600}
+table{border-collapse:collapse;font-size:12px;margin:8px 0;background:#161b22;width:100%}
+th{background:#21262d;color:#c9d1d9;padding:6px 8px;text-align:right;border:1px solid #30363d;cursor:pointer;user-select:none;font-weight:600;position:sticky;top:0}
+th:first-child,td:first-child{text-align:left}
+th:hover{background:#2d333b}
+td{padding:5px 8px;border:1px solid #30363d;text-align:right;font-variant-numeric:tabular-nums}
+tr:hover td{background:#1c2128}
+.pos{color:#3fb950}.neg{color:#f85149}.mute{color:#6e7681}
+.na{color:#6e7681;font-family:monospace}
+a{color:#58a6ff;text-decoration:none}
+a:hover{text-decoration:underline}
+.tag{display:inline-block;padding:2px 6px;border-radius:3px;background:#21262d;font-size:11px;margin-right:4px}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}
+.metric{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:10px;font-size:12px}
+.metric .v{font-size:18px;font-weight:600;color:#58a6ff;display:block;margin-top:2px}
+.banner{background:#1c2128;border:1px solid #30363d;border-left:3px solid #d29922;border-radius:6px;padding:10px 14px;margin:12px 0;font-size:13px;color:#c9d1d9}
+.toggle{display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:4px;margin-bottom:12px}
+.toggle a{display:inline-block;padding:5px 12px;border-radius:4px;font-size:13px}
+.toggle a.cur{background:#1f6feb;color:#fff}
+.foot{margin-top:32px;padding-top:12px;border-top:1px solid #30363d;color:#6e7681;font-size:11px}
+</style>
+<script>
+function sortTable(table,col,asc){
+  const rows=Array.from(table.querySelectorAll('tbody tr'));
+  rows.sort((a,b)=>{
+    let av=a.cells[col].getAttribute('data-sort')||a.cells[col].textContent;
+    let bv=b.cells[col].getAttribute('data-sort')||b.cells[col].textContent;
+    const an=parseFloat(av),bn=parseFloat(bv);
+    if(!isNaN(an)&&!isNaN(bn))return asc?an-bn:bn-an;
+    return asc?av.localeCompare(bv):bv.localeCompare(av);
+  });
+  const tb=table.querySelector('tbody');rows.forEach(r=>tb.appendChild(r));
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('table.sortable').forEach(t=>{
+    t.querySelectorAll('th').forEach((th,i)=>{
+      let asc=true;
+      th.addEventListener('click',()=>{sortTable(t,i,asc);asc=!asc;});
+    });
+  });
+});
+</script>
+</head><body>
+<nav><a href="../index.html" class="">總覽</a> <a href="../daily.html" class="">每日快照</a> <a href="../changes.html" class="">持股異動</a> <a href="../overlap.html" class="">持股重疊</a> <a href="../momentum.html" class="">同步加碼</a> <a href="../radar.html" class="">新增/賣出雷達</a></nav>
+<h1>3665 貿聯控股（BizLink Holding In — ETF 持有狀況</h1>
+
+<div class="banner">追蹤所有主動式 ETF 對 3665 的持有時序</div>
+<h2>最新持有 ETF（2026-05-16）</h2>
+<table class="sortable"><thead><tr><th>ETF</th><th>名稱</th><th>股數</th><th>權重 %</th></tr></thead><tbody>
+<tr><td><a href="../etfs/00981A.html">00981A</a></td><td>主動統一台股增長</td><td>4,703,848</td><td>3.83%</td></tr>
+<tr><td><a href="../etfs/00992A.html">00992A</a></td><td>主動群益科技創新</td><td>667,000</td><td>2.79%</td></tr>
+<tr><td><a href="../etfs/00980A.html">00980A</a></td><td>主動野村臺灣優選</td><td>130,336</td><td>1.58%</td></tr>
+<tr><td><a href="../etfs/00403A.html">00403A</a></td><td>主動統一升級50</td><td>1,160,000</td><td>1.55%</td></tr>
+<tr><td><a href="../etfs/00999A.html">00999A</a></td><td>主動野村臺灣高息</td><td>119,000</td><td>1.51%</td></tr>
+<tr><td><a href="../etfs/00984A.html">00984A</a></td><td>主動安聯台灣高息</td><td>25,000</td><td>0.79%</td></tr>
+<tr><td><a href="../etfs/00985A.html">00985A</a></td><td>主動野村台灣50</td><td>41,000</td><td>0.79%</td></tr>
+<tr><td><a href="../etfs/00982A.html">00982A</a></td><td>主動群益台灣強棒</td><td>60,136</td><td>0.25%</td></tr>
+</tbody></table>
+<h2>持有規模時序</h2>
+<div class="banner">需累積至少 2 天才有時序資料。目前 1 天。</div>
+<div class="foot">資料最新日期 2026-05-16　·　頁面生成 2026-05-16 10:40　·
+<a href="https://github.com/Simon99/active-etf-tracker">原始碼</a></div>
+</body></html>

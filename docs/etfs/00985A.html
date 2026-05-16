@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>00985A 主動野村台灣50 — 野村投信</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","SF Pro Text",sans-serif;background:#0d1117;color:#e6edf3;line-height:1.55;padding:20px;max-width:1500px;margin:0 auto}
+h1{font-size:24px;font-weight:600;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:16px}
+h2{font-size:18px;margin:28px 0 12px;color:#58a6ff;border-left:3px solid #58a6ff;padding-left:10px}
+h3{font-size:15px;margin:18px 0 8px;color:#c9d1d9}
+nav{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:13px}
+nav a{color:#58a6ff;margin-right:14px;text-decoration:none}
+nav a:hover{text-decoration:underline}
+nav a.cur{color:#fff;font-weight:600}
+table{border-collapse:collapse;font-size:12px;margin:8px 0;background:#161b22;width:100%}
+th{background:#21262d;color:#c9d1d9;padding:6px 8px;text-align:right;border:1px solid #30363d;cursor:pointer;user-select:none;font-weight:600;position:sticky;top:0}
+th:first-child,td:first-child{text-align:left}
+th:hover{background:#2d333b}
+td{padding:5px 8px;border:1px solid #30363d;text-align:right;font-variant-numeric:tabular-nums}
+tr:hover td{background:#1c2128}
+.pos{color:#3fb950}.neg{color:#f85149}.mute{color:#6e7681}
+.na{color:#6e7681;font-family:monospace}
+a{color:#58a6ff;text-decoration:none}
+a:hover{text-decoration:underline}
+.tag{display:inline-block;padding:2px 6px;border-radius:3px;background:#21262d;font-size:11px;margin-right:4px}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}
+.metric{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:10px;font-size:12px}
+.metric .v{font-size:18px;font-weight:600;color:#58a6ff;display:block;margin-top:2px}
+.banner{background:#1c2128;border:1px solid #30363d;border-left:3px solid #d29922;border-radius:6px;padding:10px 14px;margin:12px 0;font-size:13px;color:#c9d1d9}
+.toggle{display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:4px;margin-bottom:12px}
+.toggle a{display:inline-block;padding:5px 12px;border-radius:4px;font-size:13px}
+.toggle a.cur{background:#1f6feb;color:#fff}
+.foot{margin-top:32px;padding-top:12px;border-top:1px solid #30363d;color:#6e7681;font-size:11px}
+</style>
+<script>
+function sortTable(table,col,asc){
+  const rows=Array.from(table.querySelectorAll('tbody tr'));
+  rows.sort((a,b)=>{
+    let av=a.cells[col].getAttribute('data-sort')||a.cells[col].textContent;
+    let bv=b.cells[col].getAttribute('data-sort')||b.cells[col].textContent;
+    const an=parseFloat(av),bn=parseFloat(bv);
+    if(!isNaN(an)&&!isNaN(bn))return asc?an-bn:bn-an;
+    return asc?av.localeCompare(bv):bv.localeCompare(av);
+  });
+  const tb=table.querySelector('tbody');rows.forEach(r=>tb.appendChild(r));
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('table.sortable').forEach(t=>{
+    t.querySelectorAll('th').forEach((th,i)=>{
+      let asc=true;
+      th.addEventListener('click',()=>{sortTable(t,i,asc);asc=!asc;});
+    });
+  });
+});
+</script>
+</head><body>
+<nav><a href="../index.html" class="">總覽</a> <a href="../daily.html" class="">每日快照</a> <a href="../changes.html" class="">持股異動</a> <a href="../overlap.html" class="">持股重疊</a> <a href="../momentum.html" class="">同步加碼</a> <a href="../radar.html" class="">新增/賣出雷達</a></nav>
+<h1>00985A 主動野村台灣50 — 野村投信</h1>
+
+<div class="metric-grid">
+<div class="metric">NAV<span class="v">20.99</span></div>
+<div class="metric">基金規模 (B)<span class="v"><span class="na">&lt;NA&gt;</span></span></div>
+<div class="metric">受益權單位<span class="v">519,789,000</span></div>
+<div class="metric">持股數<span class="v">50</span></div>
+<div class="metric">快照日期<span class="v">2026-05-16</span></div>
+</div>
+<h2>① 技術線型（功能 5）</h2>
+<div class="banner">技術圖表（MA5/20/60/120/240 + Bollinger + RSI + MACD）→ 待接 yfinance / FinMind ETF 報價，本階段以 &lt;NA&gt; 顯示。</div>
+<h2>② 最新持股（2026-05-16）</h2>
+<table class="sortable"><thead><tr><th>個股</th><th>名稱</th><th>股數</th><th>權重 %</th></tr></thead><tbody>
+<tr><td><a href="../stocks/2330.html">2330</a></td><td>台灣積體電路製造</td><td>1,298,000</td><td>26.94%</td></tr>
+<tr><td><a href="../stocks/1216.html">1216</a></td><td>統一企業</td><td>5,227,000</td><td>3.63%</td></tr>
+<tr><td><a href="../stocks/2881.html">2881</a></td><td>富邦金融控股</td><td>4,102,000</td><td>3.61%</td></tr>
+<tr><td><a href="../stocks/2412.html">2412</a></td><td>中華電信</td><td>2,325,000</td><td>2.94%</td></tr>
+<tr><td><a href="../stocks/2891.html">2891</a></td><td>中國信託金融控股</td><td>5,402,000</td><td>2.71%</td></tr>
+<tr><td><a href="../stocks/2049.html">2049</a></td><td>上銀科技</td><td>739,000</td><td>2.66%</td></tr>
+<tr><td><a href="../stocks/4904.html">4904</a></td><td>遠傳電信</td><td>2,854,000</td><td>2.57%</td></tr>
+<tr><td><a href="../stocks/1477.html">1477</a></td><td>聚陽實業</td><td>1,218,000</td><td>2.43%</td></tr>
+<tr><td><a href="../stocks/3711.html">3711</a></td><td>日月光投資控股</td><td>462,000</td><td>2.32%</td></tr>
+<tr><td><a href="../stocks/2308.html">2308</a></td><td>台達電子工業</td><td>119,000</td><td>2.26%</td></tr>
+<tr><td><a href="../stocks/2059.html">2059</a></td><td>川湖科技</td><td>49,000</td><td>2.18%</td></tr>
+<tr><td><a href="../stocks/3017.html">3017</a></td><td>奇鋐科技</td><td>91,000</td><td>2.05%</td></tr>
+<tr><td><a href="../stocks/2360.html">2360</a></td><td>致茂電子</td><td>100,000</td><td>2.05%</td></tr>
+<tr><td><a href="../stocks/6789.html">6789</a></td><td>采鈺科技</td><td>378,000</td><td>2.03%</td></tr>
+<tr><td><a href="../stocks/2368.html">2368</a></td><td>金像電子（股）公司</td><td>165,000</td><td>1.95%</td></tr>
+<tr><td><a href="../stocks/8299.html">8299</a></td><td>群聯電子</td><td>80,000</td><td>1.94%</td></tr>
+<tr><td><a href="../stocks/6669.html">6669</a></td><td>緯穎科技服務</td><td>41,000</td><td>1.92%</td></tr>
+<tr><td><a href="../stocks/3661.html">3661</a></td><td>世芯電子</td><td>39,000</td><td>1.65%</td></tr>
+<tr><td><a href="../stocks/6223.html">6223</a></td><td>旺矽科技</td><td>30,000</td><td>1.62%</td></tr>
+<tr><td><a href="../stocks/2344.html">2344</a></td><td>華邦電子</td><td>1,336,000</td><td>1.59%</td></tr>
+<tr><td><a href="../stocks/2383.html">2383</a></td><td>台光電子材料</td><td>37,000</td><td>1.56%</td></tr>
+<tr><td><a href="../stocks/2345.html">2345</a></td><td>智邦科技</td><td>66,000</td><td>1.52%</td></tr>
+<tr><td><a href="../stocks/3293.html">3293</a></td><td>鈊象電子</td><td>229,000</td><td>1.51%</td></tr>
+<tr><td><a href="../stocks/2454.html">2454</a></td><td>聯發科技</td><td>47,000</td><td>1.40%</td></tr>
+<tr><td><a href="../stocks/7769.html">7769</a></td><td>鴻勁精密</td><td>22,000</td><td>1.39%</td></tr>
+<tr><td><a href="../stocks/6781.html">6781</a></td><td>AES Holding Co Ltd</td><td>127,000</td><td>1.35%</td></tr>
+<tr><td><a href="../stocks/3529.html">3529</a></td><td>力旺電子</td><td>37,000</td><td>1.30%</td></tr>
+<tr><td><a href="../stocks/6488.html">6488</a></td><td>環球晶圓</td><td>190,000</td><td>1.24%</td></tr>
+<tr><td><a href="../stocks/6805.html">6805</a></td><td>富世達</td><td>77,000</td><td>1.22%</td></tr>
+<tr><td><a href="../stocks/6415.html">6415</a></td><td>矽力杰</td><td>256,000</td><td>1.10%</td></tr>
+<tr><td><a href="../stocks/3653.html">3653</a></td><td>健策精密工業</td><td>33,000</td><td>1.05%</td></tr>
+<tr><td><a href="../stocks/6442.html">6442</a></td><td>光紅建聖</td><td>64,000</td><td>1.02%</td></tr>
+<tr><td><a href="../stocks/8046.html">8046</a></td><td>南亞電路板</td><td>134,000</td><td>0.97%</td></tr>
+<tr><td><a href="../stocks/8996.html">8996</a></td><td>高力熱處理工業</td><td>96,000</td><td>0.91%</td></tr>
+<tr><td><a href="../stocks/3665.html">3665</a></td><td>貿聯控股（BizLink Holding In</td><td>41,000</td><td>0.79%</td></tr>
+<tr><td><a href="../stocks/2408.html">2408</a></td><td>南亞科技</td><td>221,000</td><td>0.63%</td></tr>
+<tr><td><a href="../stocks/4749.html">4749</a></td><td>新應材</td><td>57,000</td><td>0.53%</td></tr>
+<tr><td><a href="../stocks/2395.html">2395</a></td><td>研華</td><td>104,000</td><td>0.44%</td></tr>
+<tr><td><a href="../stocks/3533.html">3533</a></td><td>嘉澤端子工業</td><td>19,000</td><td>0.41%</td></tr>
+<tr><td><a href="../stocks/8210.html">8210</a></td><td>勤誠興業</td><td>32,000</td><td>0.41%</td></tr>
+<tr><td><a href="../stocks/2317.html">2317</a></td><td>鴻海精密工業</td><td>117,000</td><td>0.27%</td></tr>
+<tr><td><a href="../stocks/2474.html">2474</a></td><td>可成科技</td><td>139,000</td><td>0.24%</td></tr>
+<tr><td><a href="../stocks/4958.html">4958</a></td><td>臻鼎科技控股</td><td>53,000</td><td>0.19%</td></tr>
+<tr><td><a href="../stocks/3105.html">3105</a></td><td>穩懋半導體</td><td>41,000</td><td>0.17%</td></tr>
+<tr><td><a href="../stocks/3189.html">3189</a></td><td>景碩科技</td><td>24,000</td><td>0.11%</td></tr>
+<tr><td><a href="../stocks/6239.html">6239</a></td><td>力成科技</td><td>25,000</td><td>0.06%</td></tr>
+<tr><td><a href="../stocks/3264.html">3264</a></td><td>欣銓科技</td><td>26,000</td><td>0.05%</td></tr>
+<tr><td><a href="../stocks/3037.html">3037</a></td><td>欣興電子</td><td>6,000</td><td>0.05%</td></tr>
+<tr><td><a href="../stocks/2382.html">2382</a></td><td>廣達電腦</td><td>14,000</td><td>0.04%</td></tr>
+<tr><td><a href="../stocks/1519.html">1519</a></td><td>華城電機</td><td>5,000</td><td>0.04%</td></tr>
+</tbody></table>
+<div class="foot">資料最新日期 2026-05-16　·　頁面生成 2026-05-16 10:40　·
+<a href="https://github.com/Simon99/active-etf-tracker">原始碼</a></div>
+</body></html>
