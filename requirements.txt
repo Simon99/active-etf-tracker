@@ -2,6 +2,9 @@ requests
 beautifulsoup4
 lxml
 pandas
+pyarrow
 openpyxl
 playwright
 playwright-stealth
+yfinance
+plotly

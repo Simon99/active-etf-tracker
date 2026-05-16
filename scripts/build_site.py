@@ -17,6 +17,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / 'scripts'))
+from etf_chart import render_chart  # noqa: E402
+
 DB = ROOT / 'data' / 'holdings.db'
 OUT = ROOT / 'docs'
 NA = '<span class="na">&lt;NA&gt;</span>'
@@ -564,9 +567,8 @@ def page_etf(con, etf_id, latest_date, base='../'):
 <div class="metric">快照日期<span class="v">{snap_date or NA}</span></div>
 </div>''')
 
-    html.append('<h2>① 技術線型（功能 5）</h2>')
-    html.append('<div class="banner">技術圖表（MA5/20/60/120/240 + Bollinger + RSI + MACD）→ '
-                '待接 yfinance / FinMind ETF 報價，本階段以 &lt;NA&gt; 顯示。</div>')
+    html.append('<h2>① 技術線型（最近 2 年日線）</h2>')
+    html.append(render_chart(etf_id))
 
     html.append(f'<h2>② 最新持股（{snap_date or "&lt;NA&gt;"}）</h2>')
     rows = []
