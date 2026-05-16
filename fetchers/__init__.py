@@ -1,5 +1,5 @@
 from .base import FetchResult, UA, to_roc
-from . import uni, capital, nomura, allianz, fsitc, jpm, tsit, mega
+from . import uni, capital, nomura, allianz, fsitc, jpm, tsit, mega, cathay, ctbc, fhtrust
 
 # 各 issuer module 註冊：etf_id → (module, fund_code)
 REGISTRY: dict[str, tuple] = {}
@@ -11,6 +11,9 @@ REGISTRY.update(fsitc.REGISTRY)
 REGISTRY.update(jpm.REGISTRY)
 REGISTRY.update(tsit.REGISTRY)
 REGISTRY.update(mega.REGISTRY)
+REGISTRY.update(cathay.REGISTRY)
+REGISTRY.update(ctbc.REGISTRY)
+REGISTRY.update(fhtrust.REGISTRY)
 
 
 def fetch(etf_id: str, date):
