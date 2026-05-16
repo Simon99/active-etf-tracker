@@ -25,7 +25,7 @@ MA_SPECS = [
 ]
 
 
-def fetch_data(ticker: str, start: str = '2024-01-01') -> pd.DataFrame:
+def fetch_data(ticker: str, start: str = '2020-01-01') -> pd.DataFrame:
     """yfinance 抓日線，含 12 小時 parquet cache。"""
     cache = CACHE_DIR / f'{ticker.replace(".", "_")}.parquet'
     if cache.exists():
@@ -56,7 +56,7 @@ def render_chart(etf_id: str) -> str:
             continue
     if df is None or df.empty or ticker is None:
         return '<div class="banner">⚠ yfinance 無資料（ETF 可能剛上市，或 .TW / .TWO 都查不到）</div>'
-    df = df.tail(500)
+    df = df.tail(1300)   # ~5 年，給 rangeselector 用
 
     fig = go.Figure()
     fig.add_trace(go.Candlestick(
@@ -75,24 +75,65 @@ def render_chart(etf_id: str) -> str:
             ))
 
     last_close = df['Close'].iloc[-1]
-    last_date = df.index[-1].strftime('%Y-%m-%d')
+    last_dt = df.index[-1]
+    last_date = last_dt.strftime('%Y-%m-%d')
+    import pandas as _pd
+    default_start = last_dt - _pd.Timedelta(days=365)
 
     fig.update_layout(
         template='plotly_dark',
         plot_bgcolor='#0d1117', paper_bgcolor='#0d1117',
         font=dict(color='#c9d1d9', size=11),
-        xaxis_rangeslider_visible=False,
-        xaxis=dict(gridcolor='#21262d'),
-        yaxis=dict(gridcolor='#21262d'),
         height=460,
-        margin=dict(l=10, r=10, t=30, b=10),
-        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1, bgcolor='rgba(0,0,0,0)'),
+        margin=dict(l=10, r=10, t=60, b=10),
+        legend=dict(orientation='h', yanchor='bottom', y=1.05, xanchor='right', x=1, bgcolor='rgba(0,0,0,0)'),
         title=dict(text=f'{ticker}　收盤 {last_close:.2f}　({last_date})',
-                   x=0.02, y=0.98, font=dict(size=13)),
+                   x=0.02, y=0.99, font=dict(size=13)),
+        xaxis=dict(
+            gridcolor='#21262d',
+            rangeslider=dict(visible=False),
+            type='date',
+            range=[default_start, last_dt],
+            autorange=False,
+            rangeselector=dict(
+                buttons=[
+                    dict(count=3, label='3M', step='month', stepmode='backward'),
+                    dict(count=6, label='6M', step='month', stepmode='backward'),
+                    dict(count=1, label='1Y', step='year',  stepmode='backward'),
+                    dict(count=3, label='3Y', step='year',  stepmode='backward'),
+                    dict(count=5, label='5Y', step='year',  stepmode='backward'),
+                    dict(label='ALL', step='all'),
+                ],
+                bgcolor='#161b22', activecolor='#1f6feb',
+                bordercolor='#30363d', borderwidth=1,
+                font=dict(color='#c9d1d9', size=12),
+                x=0, xanchor='left', y=1.08, yanchor='bottom',
+            ),
+        ),
+        yaxis=dict(gridcolor='#21262d', autorange=True, fixedrange=False),
     )
-    return fig.to_html(full_html=False, include_plotlyjs='cdn',
-                       div_id=f'chart_{etf_id}',
-                       config={'displayModeBar': False})
+    div_id = f'chart_{etf_id}'
+    chart_html = fig.to_html(full_html=False, include_plotlyjs='cdn',
+                              div_id=div_id,
+                              config={'displayModeBar': False})
+    rescale_js = f'''
+<script>
+(function(){{
+  var tries=0;
+  var iv=setInterval(function(){{
+    var gd=document.getElementById('{div_id}');
+    if(gd && gd.on){{
+      clearInterval(iv);
+      gd.on('plotly_relayout', function(ev){{
+        var x = Object.keys(ev).some(function(k){{return k.indexOf('xaxis')===0;}});
+        if(x) Plotly.relayout(gd, {{'yaxis.autorange':true}});
+      }});
+    }}
+    if(++tries>50) clearInterval(iv);
+  }}, 100);
+}})();
+</script>'''
+    return chart_html + rescale_js
 
 
 if __name__ == '__main__':
