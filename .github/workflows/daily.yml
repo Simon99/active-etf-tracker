@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests beautifulsoup4 lxml pandas openpyxl playwright
+          pip install -r requirements.txt
           # playwright chromium 給可能要用 stealth 的 fetcher
           python -m playwright install --with-deps chromium
 
