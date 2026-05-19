@@ -13,6 +13,32 @@ sys.path.insert(0, str(ROOT / 'scripts'))
 from stock_chart import fetch_data, _resolve_ticker  # noqa: E402
 
 
+def _fmt_price(p) -> str:
+    """股價標籤 (動態小數位)"""
+    if p is None:
+        return ''
+    p = float(p)
+    if p >= 100:
+        return f'{p:.0f}'
+    if p >= 10:
+        return f'{p:.1f}'
+    return f'{p:.2f}'
+
+
+def _fmt_vol(v) -> str:
+    """成交量縮寫 (10萬以上→K, 100萬以上→M, 10億以上→B)"""
+    if v is None:
+        return ''
+    v = float(v)
+    if v >= 1e9:
+        return f'{v/1e9:.1f}B'
+    if v >= 1e6:
+        return f'{v/1e6:.1f}M'
+    if v >= 1e3:
+        return f'{v/1e3:.0f}K'
+    return f'{int(v)}'
+
+
 def fetch_stock_df(stock_id: str, n_days: int = 10):
     """fetcher with ticker fallback"""
     for cand in _resolve_ticker(stock_id):
@@ -41,10 +67,12 @@ def render_mini_ohlc(stock_id: str, daily_absorbed: list | None = None,
     last5 = df.tail(5)
     has5 = len(last5) == 5
 
-    # SVG 尺寸
-    W, H = 150, 64
-    OHLC_TOP, OHLC_BOT = 4, 44     # 主圖
-    VOL_TOP, VOL_BOT = 48, 60      # 量
+    # SVG 尺寸（高度加大放數字）
+    W, H = 180, 110
+    OHLC_TOP, OHLC_BOT = 4, 50    # 主圖
+    PRICE_LABEL_Y = 60            # 收盤價文字
+    VOL_TOP, VOL_BOT = 68, 92     # 量
+    VOL_LABEL_Y = 102             # 成交量文字
     PAD = 4
 
     highs = last5['High'].values
@@ -60,13 +88,10 @@ def render_mini_ohlc(stock_id: str, daily_absorbed: list | None = None,
 
     n = len(last5)
     slot_w = (W - 2 * PAD) / n
-    candle_w = max(4, slot_w * 0.6)
+    candle_w = max(4, slot_w * 0.55)
 
     def y_p(p):
         return OHLC_TOP + (p_max - p) / p_range * (OHLC_BOT - OHLC_TOP)
-
-    def y_v(v):
-        return VOL_BOT - v / v_max * (VOL_BOT - VOL_TOP)
 
     parts = [f'<svg viewBox="0 0 {W} {H}" width="{W}" height="{H}" style="display:block">']
     for i in range(n):
@@ -80,12 +105,21 @@ def render_mini_ohlc(stock_id: str, daily_absorbed: list | None = None,
         body_top = min(y_p(o), y_p(c))
         body_h = max(1, abs(y_p(o) - y_p(c)))
         parts.append(f'<rect x="{cx - candle_w/2:.1f}" y="{body_top:.1f}" width="{candle_w:.1f}" height="{body_h:.1f}" fill="{color}"/>')
-        # volume
+        # 收盤價標籤
+        price_str = _fmt_price(c)
+        parts.append(f'<text x="{cx:.1f}" y="{PRICE_LABEL_Y}" text-anchor="middle" '
+                     f'fill="{color}" font-size="8" font-weight="600">{price_str}</text>')
+        # 成交量條
         vh = max(1, (VOL_BOT - VOL_TOP) * vols[i] / v_max)
         parts.append(f'<rect x="{cx - candle_w/2:.1f}" y="{VOL_BOT - vh:.1f}" width="{candle_w:.1f}" height="{vh:.1f}" fill="{color}" opacity="0.55"/>')
+        # 成交量標籤
+        vol_str = _fmt_vol(vols[i])
+        parts.append(f'<text x="{cx:.1f}" y="{VOL_LABEL_Y}" text-anchor="middle" '
+                     f'fill="#8b949e" font-size="8">{vol_str}</text>')
 
     # 分隔線
-    parts.append(f'<line x1="{PAD}" y1="46" x2="{W-PAD}" y2="46" stroke="#30363d" stroke-width="0.5"/>')
+    parts.append(f'<line x1="{PAD}" y1="64" x2="{W-PAD}" y2="64" stroke="#30363d" stroke-width="0.5"/>')
+    parts.append(f'<line x1="{PAD}" y1="96" x2="{W-PAD}" y2="96" stroke="#30363d" stroke-width="0.5"/>')
     parts.append('</svg>')
 
     market_vol_5d = int(vols.sum())
@@ -124,33 +158,40 @@ def _render_absorbed_svg(daily_absorbed: list,
     vals = [int(v or 0) for v in daily_absorbed]
     total = sum(vals)
     if total == 0:
-        return ('<svg viewBox="0 0 150 64" width="150" height="64"><text x="75" y="36" text-anchor="middle" '
+        return ('<svg viewBox="0 0 180 110" width="180" height="110"><text x="90" y="60" text-anchor="middle" '
                 'fill="#6e7681" font-size="10">無吸量</text></svg>'), 0
 
-    W, H = 150, 64
+    W, H = 180, 110
+    BAR_TOP = 16     # 頂端留 label 空間
+    BAR_BOT = 88     # 主圖底（軸）
+    DATE_LABEL_Y = 100
     PAD = 4
-    AXIS_Y = H - 12
-    LABEL_Y = H - 2
     n = max(len(vals), 1)
     slot_w = (W - 2 * PAD) / n
-    bar_w = max(5, slot_w * 0.65)
+    bar_w = max(5, slot_w * 0.6)
     mx = max(vals) or 1
 
     parts = [f'<svg viewBox="0 0 {W} {H}" width="{W}" height="{H}" style="display:block">']
     for i, v in enumerate(vals):
         cx = PAD + slot_w * (i + 0.5)
-        bh = (v / mx) * (AXIS_Y - PAD) if v > 0 else 0
+        bh = (v / mx) * (BAR_BOT - BAR_TOP) if v > 0 else 0
         if bh > 0:
-            parts.append(f'<rect x="{cx - bar_w/2:.1f}" y="{AXIS_Y - bh:.1f}" '
+            parts.append(f'<rect x="{cx - bar_w/2:.1f}" y="{BAR_BOT - bh:.1f}" '
                          f'width="{bar_w:.1f}" height="{bh:.1f}" fill="#3fb950"/>')
-        # x 軸 label：優先用日期；fallback 用 D-N 相對標籤
+        # 數值標籤 (bar 頂端)
+        if v > 0:
+            val_str = _fmt_vol(v)
+            label_y = max(BAR_TOP + 4, BAR_BOT - bh - 2)
+            parts.append(f'<text x="{cx:.1f}" y="{label_y:.1f}" text-anchor="middle" '
+                         f'fill="#3fb950" font-size="8" font-weight="600">{val_str}</text>')
+        # 日期 label
         if date_labels and i < len(date_labels) and date_labels[i]:
-            label = date_labels[i]
+            d_label = date_labels[i]
         else:
-            label = f'D-{n-1-i}' if i < n - 1 else 'D'
-        parts.append(f'<text x="{cx:.1f}" y="{LABEL_Y}" text-anchor="middle" '
-                     f'fill="#6e7681" font-size="8">{label}</text>')
+            d_label = f'D-{n-1-i}' if i < n - 1 else 'D'
+        parts.append(f'<text x="{cx:.1f}" y="{DATE_LABEL_Y}" text-anchor="middle" '
+                     f'fill="#6e7681" font-size="8">{d_label}</text>')
     # x 軸線
-    parts.append(f'<line x1="{PAD}" y1="{AXIS_Y}" x2="{W-PAD}" y2="{AXIS_Y}" stroke="#30363d" stroke-width="0.5"/>')
+    parts.append(f'<line x1="{PAD}" y1="{BAR_BOT}" x2="{W-PAD}" y2="{BAR_BOT}" stroke="#30363d" stroke-width="0.5"/>')
     parts.append('</svg>')
     return ''.join(parts), total
