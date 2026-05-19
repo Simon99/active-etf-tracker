@@ -21,6 +21,7 @@ sys.path.insert(0, str(ROOT / 'scripts'))
 from etf_chart import render_chart  # noqa: E402
 from stock_chart import render_stock_chart  # noqa: E402
 from etf_indicators import fetch_etf_df, compute_indicators  # noqa: E402
+from mini_chart import render_mini_ohlc  # noqa: E402
 
 DB = ROOT / 'data' / 'holdings.db'
 OUT = ROOT / 'docs'
@@ -742,27 +743,54 @@ def page_momentum(con, latest_date, base=''):
                 '<span><span style="display:inline-block;width:12px;height:12px;background:#a371f7;border-radius:50%;vertical-align:middle"></span> 2 家</span>'
                 '</div>')
 
-    # 對每個 stock，找出在 (cmp_date, latest_date) 區間內，哪些 ETF 增持了
+    # 對每個 stock，找出在 (cmp_date, latest_date) 區間內，哪些 ETF 真的「加碼」(shares 增加)
+    # 不用 weight，避免「淨值跌導致 weight 上升但 shares 沒動」的偽加碼
     rows = con.execute('''
-        WITH curr AS (SELECT etf_id, stock_id, stock_name, weight AS w_curr FROM holdings WHERE date=?),
-             base AS (SELECT etf_id, stock_id, weight AS w_base FROM holdings WHERE date=?)
+        WITH curr AS (SELECT etf_id, stock_id, stock_name, weight AS w_curr, shares AS sh_curr FROM holdings WHERE date=?),
+             base AS (SELECT etf_id, stock_id, weight AS w_base, shares AS sh_base FROM holdings WHERE date=?)
         SELECT c.stock_id, c.stock_name,
                c.etf_id,
-               c.w_curr - COALESCE(b.w_base, 0) AS w_diff
+               c.w_curr - COALESCE(b.w_base, 0) AS w_diff,
+               c.sh_curr - COALESCE(b.sh_base, 0) AS sh_diff
         FROM curr c LEFT JOIN base b ON c.etf_id=b.etf_id AND c.stock_id=b.stock_id
-        WHERE c.w_curr > COALESCE(b.w_base, 0)
+        WHERE c.sh_curr > COALESCE(b.sh_base, 0)
     ''', (latest_date, cmp_date)).fetchall()
 
     # 各 ETF 名稱
     etf_names = dict(con.execute('SELECT etf_id, etf_name FROM etf_meta').fetchall())
 
-    # 按 stock_id 聚合
+    # ── 計算逐日吸量（最近 5 個交易日）給卡片 bar chart 用 ──
+    last_n_dates = [r[0] for r in con.execute(
+        'SELECT DISTINCT date FROM holdings WHERE date<=? ORDER BY date DESC LIMIT 6',
+        (latest_date,)
+    )]
+    last_n_dates.reverse()   # oldest first
+    # n_dates-1 pairs of consecutive days
     from collections import defaultdict
+    daily_absorbed_per_stock = defaultdict(lambda: [0] * (len(last_n_dates) - 1))
+    for i in range(1, len(last_n_dates)):
+        prev_d, curr_d = last_n_dates[i - 1], last_n_dates[i]
+        diff_rows = con.execute('''
+            WITH c AS (SELECT etf_id, stock_id, shares FROM holdings WHERE date=?),
+                 p AS (SELECT etf_id, stock_id, shares AS sh_p FROM holdings WHERE date=?)
+            SELECT c.stock_id, SUM(c.shares - COALESCE(p.sh_p, 0)) AS absorbed
+            FROM c LEFT JOIN p ON c.etf_id=p.etf_id AND c.stock_id=p.stock_id
+            WHERE c.shares > COALESCE(p.sh_p, 0)
+            GROUP BY c.stock_id
+        ''', (curr_d, prev_d)).fetchall()
+        for sid, v in diff_rows:
+            daily_absorbed_per_stock[sid][i - 1] = int(v or 0)
+
+    # 按 stock_id 聚合 (含股數差)
+    from collections import defaultdict as _defdict  # noqa
     by_stock = defaultdict(list)
     sname_map = {}
-    for sid, sname, etf, w_diff in rows:
-        by_stock[sid].append((etf, w_diff))
+    sh_added_map = defaultdict(int)
+    for sid, sname, etf, w_diff, sh_diff in rows:
+        by_stock[sid].append((etf, w_diff, sh_diff))
         sname_map[sid] = sname
+        if sh_diff and sh_diff > 0:
+            sh_added_map[sid] += sh_diff
 
     # 過濾 ≥ min_etf_default + 排序
     aggregated = []
@@ -770,8 +798,8 @@ def page_momentum(con, latest_date, base=''):
         n = len(etf_list)
         if n < 2:
             continue
-        sum_w = sum(d for _e, d in etf_list)
-        max_w = max(d for _e, d in etf_list)
+        sum_w = sum(d[1] for d in etf_list)
+        max_w = max(d[1] for d in etf_list)
         aggregated.append((sid, sname_map.get(sid, ''), n, sum_w, max_w, etf_list))
     aggregated.sort(key=lambda x: (-x[2], -x[3]))
 
@@ -794,41 +822,131 @@ def page_momentum(con, latest_date, base=''):
         if n >= 3: return '#3fb950'
         return '#a371f7'
 
-    html.append('<div id="momentumGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:12px">')
+    # 並行抓 mini chart (yfinance) — N 卡片 × 1 call
+    from concurrent.futures import ThreadPoolExecutor
+    # 每個 bar 對應的日期 label (curr_date of each pair，MM-DD 格式)
+    absorbed_labels = [d[5:] for d in last_n_dates[1:]] if len(last_n_dates) >= 2 else []
+    mini_cache = {}
+    def _mini(sid):
+        try:
+            return sid, render_mini_ohlc(sid,
+                                          daily_absorbed=daily_absorbed_per_stock.get(sid),
+                                          absorbed_date_labels=absorbed_labels)
+        except Exception:
+            return sid, {'svg': '', 'absorbed_svg': '', 'stats': None, 'ticker': None}
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        for sid, mini in ex.map(_mini, [r[0] for r in aggregated]):
+            mini_cache[sid] = mini
+
+    html.append('<div id="momentumGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:12px">')
     for sid, sname, n, sum_w, max_w, etf_list in aggregated:
         color = _color(n)
+        # etf_list 內為 (etf, w_diff, sh_diff) — 排序按 w_diff
         etf_list_sorted = sorted(etf_list, key=lambda x: -x[1])
-        # 算 bar 寬：以該檔最大 increment 為 100%
         max_diff = etf_list_sorted[0][1] or 0.01
-        # 前 3 家展開，其餘藏在 details
         top3 = etf_list_sorted[:3]
         rest = etf_list_sorted[3:]
 
-        card_id = f'card_{sid}'
+        mini = mini_cache.get(sid, {})
+        mini_svg = mini.get('svg', '')
+        absorbed_svg = mini.get('absorbed_svg', '')
+        stats = mini.get('stats') or {}
+
+        # 吸量比率配色
+        ratio_html = ''
+        r = stats.get('ratio_pct') if stats else None
+        if r is not None:
+            if r >= 10:
+                rc, rlabel = '#f85149', '大量吸籌'
+            elif r >= 3:
+                rc, rlabel = '#d29922', '顯著'
+            elif r >= 1:
+                rc, rlabel = '#3fb950', '中等'
+            else:
+                rc, rlabel = '#8b949e', '輕微'
+            ratio_html = (f'<div style="font-size:11px"><span class="mute">吸量比</span> '
+                          f'<b style="color:{rc}">{r:.2f}%</b> '
+                          f'<span style="color:{rc};font-size:10px">({rlabel})</span></div>')
+
+        # 趨勢方向：日吸量是漸增還是漸減
+        trend_html = ''
+        daily = daily_absorbed_per_stock.get(sid, [])
+        if daily and sum(daily) > 0:
+            half = len(daily) // 2
+            early = sum(daily[:half]) if half else 0
+            late = sum(daily[half:]) if half else sum(daily)
+            if late > early * 1.3:
+                trend_html = '<span style="color:#3fb950;font-size:10px">📈 加速</span>'
+            elif early > late * 1.3:
+                trend_html = '<span style="color:#d29922;font-size:10px">📉 衰退</span>'
+            else:
+                trend_html = '<span class="mute" style="font-size:10px">→ 持平</span>'
+
+        # 5 日股價漲跌
+        chg5d_html = ''
+        if stats:
+            ch = stats.get('chg_pct_5d', 0)
+            cc = '#3fb950' if ch >= 0 else '#f85149'
+            chg5d_html = (f'<span style="color:{cc};font-size:10px;margin-left:4px">'
+                          f'5日 {"+" if ch >= 0 else ""}{ch:.2f}%</span>')
+
+        # total absorbed
+        total_absorbed = stats.get('total_absorbed', 0) if stats else 0
+        market_vol_5d = stats.get('market_vol_5d', 0) if stats else 0
+
         html.append(f'<div class="mom-card" data-n="{n}" '
                     f'style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px">'
-                    # 標頭：代號 / 名稱 / N 家圓圈
                     f'<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px">'
                     f'<div>'
-                    f'<div style="font-size:18px;font-weight:700"><a href="{base}stocks/{sid}.html">{sid}</a></div>'
+                    f'<div style="font-size:18px;font-weight:700"><a href="{base}stocks/{sid}.html">{sid}</a>{chg5d_html}</div>'
                     f'<div class="mute" style="font-size:13px">{sname or NA}</div>'
                     f'</div>'
-                    f'<div style="background:rgba({{}});color:{color};border:2px solid {color};'
+                    f'<div style="color:{color};border:2px solid {color};'
                     f'border-radius:50%;width:50px;height:50px;display:flex;flex-direction:column;'
-                    f'align-items:center;justify-content:center;font-weight:700">'
+                    f'align-items:center;justify-content:center;font-weight:700;flex-shrink:0">'
                     f'<div style="font-size:18px">{n}</div>'
-                    f'<div style="font-size:9px;color:{color}">家</div>'
-                    f'</div></div>'
-                    # 合計增幅 + 最大單筆
-                    f'<div style="display:flex;gap:14px;margin-bottom:10px;font-size:12px">'
+                    f'<div style="font-size:9px">家</div>'
+                    f'</div></div>')
+
+        # K 圖 + 吸量趨勢圖 並排
+        if mini_svg or absorbed_svg:
+            html.append('<div style="display:flex;gap:8px;margin-bottom:10px">'
+                        '<div style="flex:1;text-align:center">'
+                        '<div class="mute" style="font-size:10px;margin-bottom:2px">近 5 日 K + 量</div>'
+                        f'{mini_svg}'
+                        '</div>'
+                        '<div style="flex:1;text-align:center">'
+                        '<div class="mute" style="font-size:10px;margin-bottom:2px">'
+                        f'5 日吸量趨勢 {trend_html}</div>'
+                        f'{absorbed_svg}'
+                        '</div></div>')
+
+        # 吸量 + 市場量比較
+        sh_added = sh_added_map.get(sid)
+        absorbed_html = ''
+        if total_absorbed:
+            mkt_str = f'{market_vol_5d/1e6:.1f}M' if market_vol_5d >= 1e6 else f'{market_vol_5d:,}'
+            absorbed_html = (
+                f'<div style="background:rgba(63,185,80,.06);border:1px solid #30363d;border-radius:6px;'
+                f'padding:6px 10px;margin-bottom:10px;font-size:11px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">'
+                f'<div><span class="mute">5日總吸</span> <b style="color:#3fb950">{total_absorbed:,}</b> 股</div>'
+                f'<div><span class="mute">5日市場</span> <b>{mkt_str}</b></div>'
+                f'{ratio_html}'
+                f'</div>'
+            )
+        html.append(absorbed_html)
+
+        # 合計增幅 + 最大單筆 + 觀察窗口的累積加碼
+        sh_html = f'<div><span class="mute">窗口加碼</span> <b style="color:#3fb950">+{sh_added:,}</b> 股</div>' if sh_added else ''
+        html.append(f'<div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:10px;font-size:12px">'
                     f'<div><span class="mute">合計增幅</span> '
                     f'<b style="color:#3fb950">+{sum_w:.2f}%</b></div>'
                     f'<div><span class="mute">最大單筆</span> '
                     f'<b style="color:#3fb950">+{max_w:.2f}%</b></div>'
+                    f'{sh_html}'
                     f'</div>'
-                    # 進度條 list (top 3)
                     f'<div style="display:flex;flex-direction:column;gap:6px">')
-        for etf, w_diff in top3:
+        for etf, w_diff, _sh in top3:
             bar_w = int(w_diff / max_diff * 180)
             ename_short = (etf_names.get(etf, '') or '')[:8]
             html.append(f'<div style="display:flex;align-items:center;gap:8px;font-size:11px">'
@@ -840,7 +958,7 @@ def page_momentum(con, latest_date, base=''):
                         f'</div>')
         if rest:
             html.append(f'<details><summary class="mute" style="cursor:pointer;font-size:12px;text-align:center;padding:4px">▼ 展開全部 {n} 家</summary>')
-            for etf, w_diff in rest:
+            for etf, w_diff, _sh in rest:
                 bar_w = int(w_diff / max_diff * 180)
                 ename_short = (etf_names.get(etf, '') or '')[:8]
                 html.append(f'<div style="display:flex;align-items:center;gap:8px;font-size:11px;margin-top:4px">'
