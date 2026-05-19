@@ -149,6 +149,81 @@ def render_mini_ohlc(stock_id: str, daily_absorbed: list | None = None,
     }
 
 
+def render_net_flow_svg(daily_net: list, date_labels: list | None = None,
+                        width: int = 460, height: int = 180) -> str:
+    """淨流入 bar chart (正綠負紅，含 0 軸)。
+    daily_net = list of int/None (oldest→newest)，正數=加碼、負數=減碼
+    date_labels = 對應每根 bar 的日期 (MM-DD)
+    """
+    vals = [int(v) if v is not None else 0 for v in daily_net]
+    if not vals:
+        return '<div class="mute" style="text-align:center;padding:20px">資料不足</div>'
+
+    W, H = width, height
+    PAD_X = 12
+    LABEL_TOP = 14    # 數值標籤頂部空間
+    LABEL_BOT = 24    # 日期 + 數值（負）標籤空間
+    plot_top = LABEL_TOP
+    plot_bot = H - LABEL_BOT
+    plot_h = plot_bot - plot_top
+    mid_y = plot_top + plot_h / 2
+
+    mx = max((abs(v) for v in vals), default=1) or 1
+    n = len(vals)
+    slot_w = (W - 2 * PAD_X) / n
+    bar_w = max(8, slot_w * 0.5)
+
+    parts = [f'<svg viewBox="0 0 {W} {H}" width="{W}" height="{H}" style="display:block">']
+    # 0 軸
+    parts.append(f'<line x1="{PAD_X}" y1="{mid_y}" x2="{W-PAD_X}" y2="{mid_y}" '
+                 f'stroke="#30363d" stroke-width="0.8"/>')
+
+    for i, v in enumerate(vals):
+        cx = PAD_X + slot_w * (i + 0.5)
+        bar_h = abs(v) / mx * (plot_h / 2 - 2)
+        if v > 0:
+            bar_y = mid_y - bar_h
+            color = '#3fb950'
+            label_y = bar_y - 3
+            label_color = '#3fb950'
+        elif v < 0:
+            bar_y = mid_y
+            color = '#f85149'
+            label_y = mid_y + bar_h + 9
+            label_color = '#f85149'
+        else:
+            bar_y = mid_y - 0.5
+            bar_h = 1
+            color = '#30363d'
+            label_y = mid_y - 3
+            label_color = '#6e7681'
+
+        if bar_h > 0:
+            parts.append(f'<rect x="{cx - bar_w/2:.1f}" y="{bar_y:.1f}" '
+                         f'width="{bar_w:.1f}" height="{bar_h:.1f}" fill="{color}"/>')
+
+        # 數值標籤（正 = bar 頂、負 = bar 底）
+        if v != 0:
+            sign = '+' if v > 0 else '−'
+            parts.append(f'<text x="{cx:.1f}" y="{label_y:.1f}" text-anchor="middle" '
+                         f'fill="{label_color}" font-size="10" font-weight="600">'
+                         f'{sign}{_fmt_vol(abs(v))}</text>')
+        else:
+            parts.append(f'<text x="{cx:.1f}" y="{label_y:.1f}" text-anchor="middle" '
+                         f'fill="#6e7681" font-size="10">—</text>')
+
+        # 日期 label (固定底部)
+        if date_labels and i < len(date_labels) and date_labels[i]:
+            d_label = date_labels[i]
+        else:
+            d_label = f'D-{n-1-i}' if i < n - 1 else 'D'
+        parts.append(f'<text x="{cx:.1f}" y="{H-6}" text-anchor="middle" '
+                     f'fill="#8b949e" font-size="10">{d_label}</text>')
+
+    parts.append('</svg>')
+    return ''.join(parts)
+
+
 def _render_absorbed_svg(daily_absorbed: list,
                          date_labels: list | None = None) -> tuple[str, int]:
     """逐日吸量 bar chart SVG。daily_absorbed 是 [oldest...newest] list of int。

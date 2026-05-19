@@ -21,7 +21,7 @@ sys.path.insert(0, str(ROOT / 'scripts'))
 from etf_chart import render_chart  # noqa: E402
 from stock_chart import render_stock_chart  # noqa: E402
 from etf_indicators import fetch_etf_df, compute_indicators  # noqa: E402
-from mini_chart import render_mini_ohlc  # noqa: E402
+from mini_chart import render_mini_ohlc, render_net_flow_svg  # noqa: E402
 
 DB = ROOT / 'data' / 'holdings.db'
 OUT = ROOT / 'docs'
@@ -1193,6 +1193,45 @@ def page_stock(con, sid, latest_date, base='../'):
     sname = (name_row[0] if name_row else '') or sid
 
     html = [head(f'{sid} {sname} — 技術分析 + ETF 持有狀況', '', base)]
+
+    # ── 過去 5 日 ETF 整體加減碼 bar chart ──
+    last_dates = [r[0] for r in con.execute(
+        'SELECT DISTINCT date FROM holdings WHERE date<=? ORDER BY date DESC LIMIT 6',
+        (latest_date,)
+    )]
+    last_dates.reverse()   # oldest first
+    if len(last_dates) >= 2:
+        daily_net = []
+        for i in range(1, len(last_dates)):
+            prev_d, curr_d = last_dates[i-1], last_dates[i]
+            curr_rows = dict(con.execute(
+                'SELECT etf_id, shares FROM holdings WHERE date=? AND stock_id=?',
+                (curr_d, sid)
+            ).fetchall())
+            prev_rows = dict(con.execute(
+                'SELECT etf_id, shares FROM holdings WHERE date=? AND stock_id=?',
+                (prev_d, sid)
+            ).fetchall())
+            all_etfs = set(curr_rows) | set(prev_rows)
+            net = sum((curr_rows.get(e) or 0) - (prev_rows.get(e) or 0) for e in all_etfs)
+            daily_net.append(net)
+
+        date_labels = [d[5:] for d in last_dates[1:]]
+        total_net = sum(daily_net)
+        n_pos = sum(1 for v in daily_net if v > 0)
+        n_neg = sum(1 for v in daily_net if v < 0)
+
+        html.append('<h2>📊 過去 5 日 ETF 整體加減碼</h2>')
+        net_cls = 'pos' if total_net > 0 else ('neg' if total_net < 0 else 'mute')
+        net_sign = '+' if total_net > 0 else ''
+        html.append(f'<div class="banner">'
+                    f'過去 <b>{len(daily_net)}</b> 個交易日內，所有主動式 ETF 對此股的整體加減碼：'
+                    f'<b class="{net_cls}">{net_sign}{total_net:,} 股</b>　'
+                    f'（加碼 <b class="pos">{n_pos}</b> 天 / 減碼 <b class="neg">{n_neg}</b> 天）'
+                    f'</div>')
+        html.append(f'<div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px;margin:8px 0">'
+                    f'{render_net_flow_svg(daily_net, date_labels)}'
+                    f'</div>')
 
     # 技術分析（candlestick + MA + KD + MACD）
     html.append('<h2>📈 技術分析（最近 2 年日線）</h2>')
