@@ -230,6 +230,16 @@ def bar_cell(percent: float, max_pct: float = 10.0, txt: str = '') -> str:
             f'<span style="color:#c9d1d9">{txt}</span></div>')
 
 
+def clean_etf_name(name: str | None) -> str:
+    """剝掉「主動式」「主動」前綴"""
+    if not name:
+        return ''
+    for prefix in ('主動式', '主動'):
+        if name.startswith(prefix):
+            return name[len(prefix):]
+    return name
+
+
 def sparkline(values: list, max_h: int = 18) -> str:
     """近 N 日 mini bar chart。values list 含 None/數值。"""
     if not values or all(v is None for v in values):
@@ -946,28 +956,26 @@ def page_momentum(con, latest_date, base=''):
                     f'{sh_html}'
                     f'</div>'
                     f'<div style="display:flex;flex-direction:column;gap:6px">')
-        for etf, w_diff, _sh in top3:
+        def _etf_row(etf, w_diff, extra_style=''):
             bar_w = int(w_diff / max_diff * 180)
-            ename_short = (etf_names.get(etf, '') or '')[:8]
-            html.append(f'<div style="display:flex;align-items:center;gap:8px;font-size:11px">'
-                        f'<a href="{base}etfs/{etf}.html" style="min-width:80px">{ename_short}</a>'
-                        f'<div style="flex:1;background:#1c2128;border-radius:3px;height:6px;position:relative">'
-                        f'<div style="position:absolute;left:0;top:0;bottom:0;width:{bar_w}px;'
-                        f'background:linear-gradient(90deg,#3fb950,#58a6ff);border-radius:3px"></div></div>'
-                        f'<span style="color:#3fb950;min-width:55px;text-align:right">+{w_diff:.2f}%</span>'
-                        f'</div>')
+            ename_clean = clean_etf_name(etf_names.get(etf, ''))[:8]
+            ename_label = f'{etf} {ename_clean}'.strip()
+            return (f'<div style="display:flex;align-items:center;gap:8px;font-size:11px;{extra_style}">'
+                    f'<a href="{base}etfs/{etf}.html" '
+                    f'style="min-width:135px;max-width:160px;overflow:hidden;'
+                    f'text-overflow:ellipsis;white-space:nowrap" title="{ename_label}">{ename_label}</a>'
+                    f'<div style="flex:1;background:#1c2128;border-radius:3px;height:6px;position:relative">'
+                    f'<div style="position:absolute;left:0;top:0;bottom:0;width:{bar_w}px;'
+                    f'background:linear-gradient(90deg,#3fb950,#58a6ff);border-radius:3px"></div></div>'
+                    f'<span style="color:#3fb950;min-width:55px;text-align:right">+{w_diff:.2f}%</span>'
+                    f'</div>')
+
+        for etf, w_diff, _sh in top3:
+            html.append(_etf_row(etf, w_diff))
         if rest:
             html.append(f'<details><summary class="mute" style="cursor:pointer;font-size:12px;text-align:center;padding:4px">▼ 展開全部 {n} 家</summary>')
             for etf, w_diff, _sh in rest:
-                bar_w = int(w_diff / max_diff * 180)
-                ename_short = (etf_names.get(etf, '') or '')[:8]
-                html.append(f'<div style="display:flex;align-items:center;gap:8px;font-size:11px;margin-top:4px">'
-                            f'<a href="{base}etfs/{etf}.html" style="min-width:80px">{ename_short}</a>'
-                            f'<div style="flex:1;background:#1c2128;border-radius:3px;height:6px;position:relative">'
-                            f'<div style="position:absolute;left:0;top:0;bottom:0;width:{bar_w}px;'
-                            f'background:linear-gradient(90deg,#3fb950,#58a6ff);border-radius:3px"></div></div>'
-                            f'<span style="color:#3fb950;min-width:55px;text-align:right">+{w_diff:.2f}%</span>'
-                            f'</div>')
+                html.append(_etf_row(etf, w_diff, 'margin-top:4px'))
             html.append('</details>')
         html.append(f'</div>'
                     f'<div class="mute" style="font-size:10px;margin-top:10px;text-align:right">'
