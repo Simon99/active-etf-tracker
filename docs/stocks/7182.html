@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>7182 日本郵政銀行有限公司 — 技術分析 + ETF 持有狀況</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","SF Pro Text",sans-serif;background:#0d1117;color:#e6edf3;line-height:1.55;padding:20px;max-width:1500px;margin:0 auto}
+h1{font-size:24px;font-weight:600;border-bottom:1px solid #30363d;padding-bottom:10px;margin-bottom:16px}
+h2{font-size:18px;margin:28px 0 12px;color:#58a6ff;border-left:3px solid #58a6ff;padding-left:10px}
+h3{font-size:15px;margin:18px 0 8px;color:#c9d1d9}
+nav{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+nav a{color:#58a6ff;margin-right:14px;text-decoration:none}
+nav a:hover{text-decoration:underline}
+nav a.cur{color:#fff;font-weight:600}
+.freshness{font-size:12px;color:#8b949e;white-space:nowrap}
+table{border-collapse:collapse;font-size:12px;margin:8px 0;background:#161b22;width:100%}
+th{background:#21262d;color:#c9d1d9;padding:6px 8px;text-align:right;border:1px solid #30363d;cursor:pointer;user-select:none;font-weight:600;position:sticky;top:0}
+th:first-child,td:first-child{text-align:left}
+th:hover{background:#2d333b}
+td{padding:5px 8px;border:1px solid #30363d;text-align:right;font-variant-numeric:tabular-nums}
+tr:hover td{background:#1c2128}
+.pos{color:#3fb950}.neg{color:#f85149}.mute{color:#6e7681}
+.na{color:#6e7681;font-family:monospace}
+a{color:#58a6ff;text-decoration:none}
+a:hover{text-decoration:underline}
+.tag{display:inline-block;padding:2px 6px;border-radius:3px;background:#21262d;font-size:11px;margin-right:4px}
+
+/* ---- 大型 metric cards (新版) ---- */
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:14px 0}
+.metric{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px 16px;font-size:12px;position:relative}
+.metric .label{color:#8b949e;font-size:12px;display:flex;align-items:center;gap:6px}
+.metric .v{font-size:26px;font-weight:700;color:#58a6ff;display:block;margin-top:6px;line-height:1.1;font-variant-numeric:tabular-nums}
+.metric.pos .v{color:#3fb950}.metric.neg .v{color:#f85149}.metric.warn .v{color:#d29922}.metric.info .v{color:#a371f7}
+.metric.lg .v{font-size:30px}
+.metric .sub{color:#6e7681;font-size:11px;margin-top:4px}
+
+/* ---- action pill (加碼 / 減碼 / 新增 / 出清) ---- */
+.pill{display:inline-block;padding:2px 9px;border-radius:4px;font-size:11px;font-weight:600;border:1px solid transparent}
+.pill-add{background:rgba(63,185,80,.15);color:#3fb950;border-color:rgba(63,185,80,.3)}
+.pill-cut{background:rgba(248,81,73,.15);color:#f85149;border-color:rgba(248,81,73,.3)}
+.pill-up{background:rgba(63,185,80,.15);color:#3fb950;border-color:rgba(63,185,80,.3)}
+.pill-down{background:rgba(210,153,34,.15);color:#d29922;border-color:rgba(210,153,34,.3)}
+.pill-new{background:rgba(31,111,235,.15);color:#58a6ff;border-color:rgba(31,111,235,.3)}
+.pill-flat{background:rgba(110,118,129,.15);color:#8b949e;border-color:rgba(110,118,129,.3)}
+
+/* ---- bar 進度條 (table cell 內) ---- */
+.bar{display:inline-block;height:6px;background:#1f6feb;border-radius:3px;vertical-align:middle;min-width:1px}
+.bar-cell{display:flex;align-items:center;gap:6px;justify-content:flex-start}
+.bar-cell .bar{flex:0 0 auto}
+
+/* ---- sparkline (近 N 日趨勢迷你 bar) ---- */
+.sparkline{display:inline-flex;align-items:flex-end;gap:1px;height:18px;min-width:30px}
+.sparkline span{width:3px;background:#30363d;border-radius:1px 1px 0 0}
+.sparkline span.up{background:#3fb950}.sparkline span.down{background:#f85149}
+
+/* ---- filter tabs ---- */
+.filter-tabs{display:inline-flex;gap:6px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:4px;margin:10px 0;flex-wrap:wrap}
+.filter-tabs button{background:transparent;color:#8b949e;border:none;padding:6px 14px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit}
+.filter-tabs button:hover{color:#c9d1d9}
+.filter-tabs button.cur{background:#1f6feb;color:#fff}
+
+/* ---- 已存在 ---- */
+.banner{background:#1c2128;border:1px solid #30363d;border-left:3px solid #d29922;border-radius:6px;padding:10px 14px;margin:12px 0;font-size:13px;color:#c9d1d9}
+.toggle{display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:4px;margin-bottom:12px}
+.toggle a{display:inline-block;padding:5px 12px;border-radius:4px;font-size:13px}
+.toggle a.cur{background:#1f6feb;color:#fff}
+.foot{margin-top:32px;padding-top:12px;border-top:1px solid #30363d;color:#6e7681;font-size:11px}
+</style>
+<script>
+function sortTable(table,col,asc){
+  const rows=Array.from(table.querySelectorAll('tbody tr'));
+  rows.sort((a,b)=>{
+    let av=a.cells[col].getAttribute('data-sort')||a.cells[col].textContent;
+    let bv=b.cells[col].getAttribute('data-sort')||b.cells[col].textContent;
+    const an=parseFloat(av),bn=parseFloat(bv);
+    if(!isNaN(an)&&!isNaN(bn))return asc?an-bn:bn-an;
+    return asc?av.localeCompare(bv):bv.localeCompare(av);
+  });
+  const tb=table.querySelector('tbody');rows.forEach(r=>tb.appendChild(r));
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('table.sortable').forEach(t=>{
+    t.querySelectorAll('th').forEach((th,i)=>{
+      let asc=true;
+      th.addEventListener('click',()=>{sortTable(t,i,asc);asc=!asc;});
+    });
+  });
+});
+</script>
+<script>
+(function(){
+  function tick(){
+    document.querySelectorAll('[data-build-utc]').forEach(function(el){
+      var u = el.getAttribute('data-build-utc');
+      var d = new Date(u);
+      var now = new Date();
+      var diffMin = Math.floor((now - d) / 60000);
+      var diffH = diffMin / 60;
+      var diffD = diffH / 24;
+      var rel;
+      if (diffMin < 1) rel = '剛剛';
+      else if (diffMin < 60) rel = diffMin + ' 分鐘前';
+      else if (diffH < 24) rel = Math.floor(diffH) + ' 小時前';
+      else rel = Math.floor(diffD) + ' 天前';
+
+      var color = '#3fb950';      // 綠 < 12h
+      if (diffH >= 12) color = '#d29922';   // 黃 12h-3d
+      if (diffD >= 3)  color = '#f85149';   // 紅 > 3d
+
+      var local = d.toLocaleString('zh-TW', {hour12:false});
+      el.innerHTML = '<span style="color:' + color + '">●</span> ' +
+                     '<span title="' + local + ' (本機時區)">' + rel + '</span>';
+    });
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    tick();
+    setInterval(tick, 60000);   // 每分鐘更新「N 分鐘前」
+  });
+})();
+</script>
+<script>
+function setupFilterTabs(tabsId, tableId) {
+  var tabs = document.getElementById(tabsId);
+  var table = document.getElementById(tableId);
+  if (!tabs || !table) return;
+  tabs.querySelectorAll('button').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      tabs.querySelectorAll('button').forEach(function(b){b.classList.remove('cur');});
+      btn.classList.add('cur');
+      var f = btn.getAttribute('data-filter');
+      table.querySelectorAll('tbody tr').forEach(function(tr) {
+        if (f === 'all' || tr.getAttribute('data-action') === f) {
+          tr.style.display = '';
+        } else {
+          tr.style.display = 'none';
+        }
+      });
+    });
+  });
+}
+</script>
+</head><body>
+<nav><span class="nav-links"><a href="../index.html" class="">總覽</a> <a href="../daily.html" class="">每日快照</a> <a href="../changes.html" class="">持股異動</a> <a href="../overlap.html" class="">持股重疊</a> <a href="../momentum.html" class="">同步加碼</a> <a href="../radar.html" class="">新增/賣出雷達</a></span><span class="freshness" data-build-utc="2026-06-01T10:51:58+00:00">●</span></nav>
+<h1>7182 日本郵政銀行有限公司 — 技術分析 + ETF 持有狀況</h1>
+
+<h2>📊 過去 5 日 ETF 整體加減碼</h2>
+<div class="banner">過去 <b>5</b> 個交易日內，所有主動式 ETF 對此股的整體加減碼：<b class="pos">+45,000 股</b>　（加碼 <b class="pos">1</b> 天 / 減碼 <b class="neg">0</b> 天）</div>
+<div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px;margin:8px 0"><svg viewBox="0 0 460 180" width="460" height="180" style="display:block"><line x1="12" y1="85.0" x2="448" y2="85.0" stroke="#30363d" stroke-width="0.8"/><rect x="33.8" y="84.5" width="43.6" height="1.0" fill="#30363d"/><text x="55.6" y="82.0" text-anchor="middle" fill="#6e7681" font-size="10">—</text><text x="55.6" y="174" text-anchor="middle" fill="#8b949e" font-size="10">05-28</text><rect x="121.0" y="84.5" width="43.6" height="1.0" fill="#30363d"/><text x="142.8" y="82.0" text-anchor="middle" fill="#6e7681" font-size="10">—</text><text x="142.8" y="174" text-anchor="middle" fill="#8b949e" font-size="10">05-29</text><rect x="208.2" y="84.5" width="43.6" height="1.0" fill="#30363d"/><text x="230.0" y="82.0" text-anchor="middle" fill="#6e7681" font-size="10">—</text><text x="230.0" y="174" text-anchor="middle" fill="#8b949e" font-size="10">05-30</text><rect x="295.4" y="84.5" width="43.6" height="1.0" fill="#30363d"/><text x="317.2" y="82.0" text-anchor="middle" fill="#6e7681" font-size="10">—</text><text x="317.2" y="174" text-anchor="middle" fill="#8b949e" font-size="10">05-31</text><rect x="382.6" y="16.0" width="43.6" height="69.0" fill="#3fb950"/><text x="404.4" y="13.0" text-anchor="middle" fill="#3fb950" font-size="10" font-weight="600">+45K</text><text x="404.4" y="174" text-anchor="middle" fill="#8b949e" font-size="10">06-01</text></svg></div>
+<h2>📈 技術分析（最近 2 年日線）</h2>
+<div class="banner">⚠ yfinance 無資料（7182.TW / 7182.TWO 都查不到）</div>
+<h2>最新持有 ETF（2026-06-01）</h2>
+<table class="sortable"><thead><tr><th>ETF</th><th>名稱</th><th>股數</th><th>權重 %</th></tr></thead><tbody>
+<tr><td><a href="../etfs/00998A.html">00998A</a></td><td>主動復華金融股息</td><td>45,000</td><td>1.05%</td></tr>
+</tbody></table>
+<h2>持有規模時序</h2>
+<div class="banner">需累積至少 2 天才有時序資料。目前 1 天。</div>
+<div class="foot">資料最新日期 2026-06-01　·
+頁面生成 2026-06-01 10:51 UTC　·
+<a href="https://github.com/Simon99/active-etf-tracker">原始碼</a>　·
+<a href="https://github.com/Simon99/active-etf-tracker/actions">Actions 歷史</a></div>
+</body></html>
