@@ -139,29 +139,39 @@ function setupFilterTabs(tabsId, tableId) {
 }
 </script>
 </head><body>
-<nav><span class="nav-links"><a href="index.html" class="">總覽</a> <a href="daily.html" class="">每日快照</a> <a href="changes.html" class="">持股異動</a> <a href="overlap.html" class="">持股重疊</a> <a href="momentum.html" class="">同步加碼</a> <a href="radar.html" class="cur">新增/賣出雷達</a></span><span class="freshness" data-build-utc="2026-08-07T01:02:27+00:00">●</span></nav>
+<nav><span class="nav-links"><a href="index.html" class="">總覽</a> <a href="daily.html" class="">每日快照</a> <a href="changes.html" class="">持股異動</a> <a href="overlap.html" class="">持股重疊</a> <a href="momentum.html" class="">同步加碼</a> <a href="radar.html" class="cur">新增/賣出雷達</a></span><span class="freshness" data-build-utc="2026-08-07T10:26:10+00:00">●</span></nav>
 <h1>新增 / 賣出雷達</h1>
 
 <p class="mute" style="margin:-8px 0 16px">全部 22 檔主動式 ETF · 比對 2026-08-06 → 2026-08-07</p>
 <h2>🟢 新增雷達</h2>
 <div class="metric-grid">
-<div class="metric pos"><div class="label"><span>🟢</span> 有新增的 ETF</div><span class="v">1 檔</span></div>
-<div class="metric pos"><div class="label">新增個股筆數</div><span class="v">1 筆</span></div>
+<div class="metric pos"><div class="label"><span>🟢</span> 有新增的 ETF</div><span class="v">2 檔</span></div>
+<div class="metric pos"><div class="label">新增個股筆數</div><span class="v">3 筆</span></div>
 <div class="metric info"><div class="label"><span>🎯</span> 多家同步新增</div><span class="v">0 檔</span><div class="sub">≥ 2 家 ETF 同時新增</div></div>
 </div>
 <h3>各 ETF 新增明細</h3>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:10px">
+<div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><a href="etfs/00985A.html" style="font-weight:600">00985A</a> <span class="mute" style="font-size:12px">主動野村台灣50</span></div><span class="pill pill-add">+2 檔</span></div><div style="display:flex;flex-wrap:wrap;gap:6px">
+<a href="stocks/2603.html" class="tag" style="background:rgba(63,185,80,.1);color:#3fb950;border:1px solid rgba(63,185,80,.2)">2603 長榮海運 <span class="mute">+1.53%</span></a>
+<a href="stocks/2610.html" class="tag" style="background:rgba(63,185,80,.1);color:#3fb950;border:1px solid rgba(63,185,80,.2)">2610 中華航空 <span class="mute">+1.53%</span></a>
+</div></div>
 <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><a href="etfs/00995A.html" style="font-weight:600">00995A</a> <span class="mute" style="font-size:12px">主動中信台灣卓越</span></div><span class="pill pill-add">+1 檔</span></div><div style="display:flex;flex-wrap:wrap;gap:6px">
 <a href="stocks/3450.html" class="tag" style="background:rgba(63,185,80,.1);color:#3fb950;border:1px solid rgba(63,185,80,.2)">3450 聯鈞光電 <span class="mute">+0.39%</span></a>
 </div></div>
 </div>
 <h2 style="margin-top:32px">🔴 賣出雷達</h2>
 <div class="metric-grid">
-<div class="metric warn"><div class="label"><span>🔴</span> 有減碼的 ETF</div><span class="v">2 檔</span></div>
+<div class="metric warn"><div class="label"><span>🔴</span> 有減碼的 ETF</div><span class="v">13 檔</span></div>
 <div class="metric neg"><div class="label">移除個股</div><span class="v">1 筆</span><div class="sub">完全出清</div></div>
-<div class="metric warn"><div class="label">減持個股</div><span class="v">3 筆</span><div class="sub">股數降低</div></div>
-<div class="metric info"><div class="label"><span>🎯</span> 多家同步減碼</div><span class="v">0 檔</span><div class="sub">≥ 2 家 ETF 同時</div></div>
+<div class="metric warn"><div class="label">減持個股</div><span class="v">30 筆</span><div class="sub">股數降低</div></div>
+<div class="metric info"><div class="label"><span>🎯</span> 多家同步減碼</div><span class="v">3 檔</span><div class="sub">≥ 2 家 ETF 同時</div></div>
 </div>
+<h3 style="color:#f85149">多家同步減碼 (≥ 2 家，含出清 + 減持)</h3>
+<table class="sortable"><thead><tr><th>排名</th><th>共幾家</th><th>個股</th><th>名稱</th><th>視覺</th></tr></thead><tbody>
+<tr><td>#1</td><td><b style="color:#f85149">2</b> 家</td><td><a href="stocks/2330.html">2330</a></td><td>台灣積體電路製造</td><td><div class="bar-cell"><span class="bar" style="width:200px;background:linear-gradient(90deg,#f85149,#d29922)"></span><span class="mute" style="font-size:11px">2 ETF</span></div></td></tr>
+<tr><td>#2</td><td><b style="color:#f85149">2</b> 家</td><td><a href="stocks/2327.html">2327</a></td><td>國巨</td><td><div class="bar-cell"><span class="bar" style="width:200px;background:linear-gradient(90deg,#f85149,#d29922)"></span><span class="mute" style="font-size:11px">2 ETF</span></div></td></tr>
+<tr><td>#3</td><td><b style="color:#f85149">2</b> 家</td><td><a href="stocks/2059.html">2059</a></td><td>川湖科技</td><td><div class="bar-cell"><span class="bar" style="width:200px;background:linear-gradient(90deg,#f85149,#d29922)"></span><span class="mute" style="font-size:11px">2 ETF</span></div></td></tr>
+</tbody></table>
 <h3>各 ETF 出清明細</h3>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:10px">
 <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><a href="etfs/00989A.html" style="font-weight:600">00989A</a> <span class="mute" style="font-size:12px">主動摩根美國科技</span></div><span class="pill pill-cut">-1 檔</span></div><div style="display:flex;flex-wrap:wrap;gap:6px">
@@ -169,7 +179,7 @@ function setupFilterTabs(tabsId, tableId) {
 </div></div>
 </div>
 <div class="foot">資料最新日期 2026-08-07　·
-頁面生成 2026-08-07 01:02 UTC　·
+頁面生成 2026-08-07 10:26 UTC　·
 <a href="https://github.com/Simon99/active-etf-tracker">原始碼</a>　·
 <a href="https://github.com/Simon99/active-etf-tracker/actions">Actions 歷史</a></div>
 </body></html>
